@@ -46,7 +46,7 @@ public class FilmeServiceImpl implements FilmeService {
 					filme.setDuracao(filmeAtualizado.getDuracao());
 					filme.setSinopse(filmeAtualizado.getSinopse());
 					filme.setGenero(filmeAtualizado.getGenero());
-					filme.setEmCartaz(filmeAtualizado.getEmCartaz());
+					filme.setEmCartaz(filmeAtualizado.isEmCartaz());
 					filme.setAvaliacao(filmeAtualizado.getAvaliacao());
 					filme.setDiretor(filmeAtualizado.getDiretor());
 					filme.setIngresso(filmeAtualizado.getIngresso());
@@ -56,7 +56,7 @@ public class FilmeServiceImpl implements FilmeService {
 	}
 
 	@Override
-	public List<Filme> findByEmCartaz(String emCartaz) {
+	public List<Filme> findByEmCartaz(boolean emCartaz) {
 		return filmeRepository.findByEmCartaz(emCartaz);
 	}
 
@@ -98,7 +98,7 @@ public class FilmeServiceImpl implements FilmeService {
 				.duracao(dto.getDuracao())
 				.sinopse(dto.getSinopse())
 				.genero(dto.getGenero())
-				.emCartaz(dto.getEmCartaz())
+				.emCartaz(dto.isEmCartaz())
 				.avaliacao(dto.getAvaliacao())
 				.diretor(dto.getDiretor())
 				.ingresso(dto.getIngresso())
@@ -119,7 +119,7 @@ public class FilmeServiceImpl implements FilmeService {
 		filmeExistente.setDuracao(dto.getDuracao());
 		filmeExistente.setSinopse(dto.getSinopse());
 		filmeExistente.setGenero(dto.getGenero());
-		filmeExistente.setEmCartaz(dto.getEmCartaz());
+		filmeExistente.setEmCartaz(dto.isEmCartaz());
 		filmeExistente.setAvaliacao(dto.getAvaliacao());
 		filmeExistente.setDiretor(dto.getDiretor());
 		filmeExistente.setIngresso(dto.getIngresso());

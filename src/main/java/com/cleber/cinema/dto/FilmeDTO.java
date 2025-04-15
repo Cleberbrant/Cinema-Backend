@@ -21,7 +21,7 @@ public class FilmeDTO {
 
 	private String sinopse;
 	private String genero;
-	private String emCartaz;
+	private boolean emCartaz;
 	private String avaliacao;
 	private String diretor;
 	private String ingresso;

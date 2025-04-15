@@ -84,7 +84,7 @@ public class FilmeController {
 	@Operation(summary = "Listar filmes em cartaz",
 			description = "Retorna uma lista com todos os filmes em cartaz")
 	@ApiResponse(responseCode = "200", description = "Lista de filmes retornada com sucesso")
-	public ResponseEntity<List<Filme>> findByEmCartaz(@PathVariable String status) {
+	public ResponseEntity<List<Filme>> findByEmCartaz(@PathVariable boolean status) {
 		List<Filme> filmes = service.findByEmCartaz(status);
 		return ResponseEntity.ok(filmes);
 	}

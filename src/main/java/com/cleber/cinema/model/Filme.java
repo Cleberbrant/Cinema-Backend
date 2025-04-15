@@ -24,10 +24,10 @@ public class Filme {
 	private String duracao;
 	private String sinopse;
 	private String genero;
-	private String emCartaz;
 	private String avaliacao;
 	private String diretor;
 	private String ingresso;
+	private boolean emCartaz;
 
 	@ManyToMany(mappedBy = "filmes")
 	private List<Cliente> clientes = new ArrayList<>();

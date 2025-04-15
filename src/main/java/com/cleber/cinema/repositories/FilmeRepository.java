@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface FilmeRepository extends JpaRepository<Filme, Integer> {
-	List<Filme> findByEmCartaz(String emCartaz);
+	List<Filme> findByEmCartaz(boolean emCartaz);
 	List<Filme> findByGenero(String genero);
 	List<Filme> findByTituloContainingIgnoreCase(String titulo);
 }

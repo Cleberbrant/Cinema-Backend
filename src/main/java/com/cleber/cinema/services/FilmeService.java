@@ -11,7 +11,9 @@ public interface FilmeService {
 	Filme findById(Integer id);
 	void delete(Integer id);
 	Filme update(Integer id, Filme filme);
-	List<Filme> findByEmCartaz(String emCartaz);
+
+	List<Filme> findByEmCartaz(boolean emCartaz);
+
 	List<Filme> findByGenero(String genero);
 	List<Filme> findByTitulo(String titulo);
 	boolean confirmarFilme(Filme filme);
