@@ -1,5 +1,6 @@
 package com.cleber.cinema.services;
 
+import com.cleber.cinema.dto.FilmeDTO;
 import com.cleber.cinema.model.Filme;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface FilmeService {
 	List<Filme> findByGenero(String genero);
 	List<Filme> findByTitulo(String titulo);
 	boolean confirmarFilme(Filme filme);
+	Filme createFromDTO(FilmeDTO dto);
+	Filme updateFromDTO(Integer id, FilmeDTO dto);
 }
