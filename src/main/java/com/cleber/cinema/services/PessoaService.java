@@ -11,4 +11,6 @@ public interface PessoaService<T extends Pessoa> {
 	Optional<T> findById(Integer id);
 	void delete(Integer id);
 	T update(Integer id, T entity);
+	Optional<T> findByCpf(String cpf);
+	Optional<T> findByEmail(String email);
 }
