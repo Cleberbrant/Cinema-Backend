@@ -11,7 +11,6 @@ public class UsuarioCreateDTO {
 	private String cpf;
 	private String email;
 	private String password;
-	private String endereco;
-	private String estado;
-	private String cidade;
+	private String role;
+	private LocalidadeDTO localidade;
 }

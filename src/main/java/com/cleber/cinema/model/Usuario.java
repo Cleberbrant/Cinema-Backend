@@ -35,16 +35,12 @@ public class Usuario {
 	@NotBlank
 	private String password;
 
-	@NotBlank
-	private String endereco;
-
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private Role role;
 
-	@NotBlank
-	private String estado;
-
-	@NotBlank
-	private String cidade;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "localidade_id")
+	@NotNull
+	private Localidade localidade;
 }

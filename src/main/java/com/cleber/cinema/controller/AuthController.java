@@ -2,8 +2,9 @@ package com.cleber.cinema.controller;
 
 import com.cleber.cinema.dto.AuthRequestDTO;
 import com.cleber.cinema.dto.AuthResponseDTO;
-import com.cleber.cinema.dto.UsuarioCadastroDTO;
+import com.cleber.cinema.dto.UsuarioCreateDTO;
 import com.cleber.cinema.enums.Role;
+import com.cleber.cinema.model.Localidade;
 import com.cleber.cinema.model.Usuario;
 import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.security.JwtUtil;
@@ -36,28 +37,34 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody UsuarioCadastroDTO usuarioCadastroDTO) {
-		if (usuarioRepository.findByEmail(usuarioCadastroDTO.getEmail()).isPresent()) {
+	public ResponseEntity<?> register(@RequestBody UsuarioCreateDTO usuarioCreateDTO) {
+		if (usuarioRepository.findByEmail(usuarioCreateDTO.getEmail()).isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado");
 		}
 		Role role = Role.ROLE_USER;
-		if (usuarioCadastroDTO.getRole() != null) {
+		if (usuarioCreateDTO.getRole() != null) {
 			try {
-				role = Role.valueOf(usuarioCadastroDTO.getRole());
+				role = Role.valueOf(usuarioCreateDTO.getRole());
 			} catch (IllegalArgumentException e) {
 				return ResponseEntity.badRequest().body("Role inválido! Use apenas: ROLE_USER ou ROLE_ADMIN.");
 			}
 		}
 		Usuario usuario = Usuario.builder()
-				.email(usuarioCadastroDTO.getEmail())
-				.password(passwordEncoder.encode(usuarioCadastroDTO.getPassword()))
-				.nome(usuarioCadastroDTO.getNome())
-				.dataNascimento(usuarioCadastroDTO.getDataNascimento())
-				.cpf(usuarioCadastroDTO.getCpf())
-				.endereco(usuarioCadastroDTO.getEndereco())
-				.estado(usuarioCadastroDTO.getEstado())
-				.cidade(usuarioCadastroDTO.getCidade())
+				.email(usuarioCreateDTO.getEmail())
+				.password(passwordEncoder.encode(usuarioCreateDTO.getPassword()))
+				.nome(usuarioCreateDTO.getNome())
+				.dataNascimento(usuarioCreateDTO.getDataNascimento())
+				.cpf(usuarioCreateDTO.getCpf())
 				.role(role)
+				.localidade(usuarioCreateDTO.getLocalidade() != null
+								? new Localidade(
+								null,
+								usuarioCreateDTO.getLocalidade().getEndereco(),
+								usuarioCreateDTO.getLocalidade().getCep(),
+								usuarioCreateDTO.getLocalidade().getReferencia()
+						)
+								: null
+				)
 				.build();
 		usuarioRepository.save(usuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");

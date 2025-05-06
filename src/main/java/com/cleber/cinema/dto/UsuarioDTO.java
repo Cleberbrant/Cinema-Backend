@@ -9,6 +9,5 @@ public class UsuarioDTO {
 	private String nome;
 	private String email;
 	private Role role;
-	private String estado;
-	private String cidade;
+	private LocalidadeDTO localidade;
 }
