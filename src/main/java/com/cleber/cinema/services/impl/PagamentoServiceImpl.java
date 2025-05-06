@@ -1,113 +1,124 @@
 package com.cleber.cinema.services.impl;
 
+import com.cleber.cinema.dto.PagamentoCreateDTO;
+import com.cleber.cinema.dto.PagamentoDTO;
 import com.cleber.cinema.exception.ResourceNotFoundException;
+import com.cleber.cinema.model.Alimento;
+import com.cleber.cinema.model.Filme;
 import com.cleber.cinema.model.Pagamento;
+import com.cleber.cinema.model.Usuario;
+import com.cleber.cinema.repositories.AlimentoRepository;
+import com.cleber.cinema.repositories.FilmeRepository;
 import com.cleber.cinema.repositories.PagamentoRepository;
+import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.services.PagamentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PagamentoServiceImpl implements PagamentoService {
 
 	private final PagamentoRepository pagamentoRepository;
+	private final FilmeRepository filmeRepository;
+	private final AlimentoRepository alimentoRepository;
+	private final UsuarioRepository usuarioRepository;
 
-	@Override
-	public Pagamento save(Pagamento pagamento) {
-		return pagamentoRepository.save(pagamento);
+	private PagamentoDTO toDTO(Pagamento pagamento) {
+		PagamentoDTO dto = new PagamentoDTO();
+		dto.setId(pagamento.getId());
+		dto.setNumeroDoCartao(pagamento.getNumeroDoCartao());
+		dto.setNomeImpresso(pagamento.getNomeImpresso());
+		dto.setDataDeValidade(pagamento.getDataDeValidade());
+		dto.setCodigoDeSeguranca(pagamento.getCodigoDeSeguranca());
+		dto.setValorTotal(pagamento.getValorTotal());
+		dto.setDataPagamento(pagamento.getDataPagamento());
+		dto.setUsuarioId(pagamento.getUsuario() != null ? pagamento.getUsuario().getId() : null);
+		dto.setUsuarioNome(pagamento.getUsuario() != null ? pagamento.getUsuario().getNome() : null);
+		dto.setFilmeId(pagamento.getFilme() != null ? pagamento.getFilme().getId() : null);
+		dto.setFilmeTitulo(pagamento.getFilme() != null ? pagamento.getFilme().getTitulo() : null);
+		dto.setAlimentosIds(pagamento.getAlimentos() != null
+				? pagamento.getAlimentos().stream().map(a -> a.getId()).toList()
+				: null);
+		dto.setAlimentosNomes(pagamento.getAlimentos() != null
+				? pagamento.getAlimentos().stream().map(a -> a.getNome()).toList()
+				: null);
+		return dto;
+	}
+
+	private Pagamento toEntity(PagamentoCreateDTO dto) {
+		Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+				.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + dto.getUsuarioId()));
+		Filme filme = filmeRepository.findById(dto.getFilmeId())
+				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
+		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
+				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+		return Pagamento.builder()
+				.numeroDoCartao(dto.getNumeroDoCartao())
+				.nomeImpresso(dto.getNomeImpresso())
+				.dataDeValidade(dto.getDataDeValidade())
+				.codigoDeSeguranca(dto.getCodigoDeSeguranca())
+				.valorTotal(dto.getValorTotal())
+				.dataPagamento(LocalDateTime.now())
+				.usuario(usuario)
+				.filme(filme)
+				.alimentos(alimentos)
+				.build();
 	}
 
 	@Override
-	public List<Pagamento> findAll() {
-		return pagamentoRepository.findAll();
+	public PagamentoDTO create(PagamentoCreateDTO dto) {
+		Pagamento pagamento = toEntity(dto);
+		return toDTO(pagamentoRepository.save(pagamento));
 	}
 
 	@Override
-	public Pagamento findById(Integer id) {
-		return pagamentoRepository.findById(id)
+	public List<PagamentoDTO> findAll() {
+		return pagamentoRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+	}
+
+	@Override
+	public PagamentoDTO findById(Integer id) {
+		Pagamento pagamento = pagamentoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado com id: " + id));
+		return toDTO(pagamento);
+	}
+
+	@Override
+	public PagamentoDTO update(Integer id, PagamentoCreateDTO dto) {
+		Pagamento pagamento = pagamentoRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado com id: " + id));
+		Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+				.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + dto.getUsuarioId()));
+		Filme filme = filmeRepository.findById(dto.getFilmeId())
+				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
+		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
+				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+		pagamento.setNumeroDoCartao(dto.getNumeroDoCartao());
+		pagamento.setNomeImpresso(dto.getNomeImpresso());
+		pagamento.setDataDeValidade(dto.getDataDeValidade());
+		pagamento.setCodigoDeSeguranca(dto.getCodigoDeSeguranca());
+		pagamento.setValorTotal(dto.getValorTotal());
+		pagamento.setUsuario(usuario);
+		pagamento.setFilme(filme);
+		pagamento.setAlimentos(alimentos);
+		return toDTO(pagamentoRepository.save(pagamento));
 	}
 
 	@Override
 	public void delete(Integer id) {
+		if (!pagamentoRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Pagamento não encontrado com id: " + id);
+		}
 		pagamentoRepository.deleteById(id);
 	}
 
 	@Override
-	public Pagamento update(Integer id, Pagamento pagamentoAtualizado) {
-		return pagamentoRepository.findById(id)
-				.map(pagamento -> {
-					pagamento.setNumeroDoCartao(pagamentoAtualizado.getNumeroDoCartao());
-					pagamento.setNomeImpresso(pagamentoAtualizado.getNomeImpresso());
-					pagamento.setDataDeValidade(pagamentoAtualizado.getDataDeValidade());
-					pagamento.setCodigoDeSeguranca(pagamentoAtualizado.getCodigoDeSeguranca());
-					pagamento.setCpf(pagamentoAtualizado.getCpf());
-					pagamento.setPix(pagamentoAtualizado.getPix());
-					pagamento.setDinheiro(pagamentoAtualizado.getDinheiro());
-					pagamento.setFilme(pagamentoAtualizado.getFilme());
-					return pagamentoRepository.save(pagamento);
-				})
-				.orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado com id: " + id));
-	}
-
-	@Override
-	public List<Pagamento> findByFilme(Integer filmeId) {
-		return pagamentoRepository.findByFilmeId(filmeId);
-	}
-
-	@Override
-	public boolean validacaoDaEscolha(Pagamento pagamento) {
-		// Validação de cartão de crédito
-		if (pagamento.getNumeroDoCartao() != null && !pagamento.getNumeroDoCartao().isEmpty()) {
-			// Validações do cartão
-			if (pagamento.getNomeImpresso() == null || pagamento.getNomeImpresso().isEmpty()) {
-				return false;
-			}
-			if (pagamento.getCodigoDeSeguranca() == null || pagamento.getCodigoDeSeguranca().isEmpty()) {
-				return false;
-			}
-			if (pagamento.getDataDeValidade() == null || pagamento.getDataDeValidade().isBefore(LocalDate.now())) {
-				return false;
-			}
-		}
-
-		// Validação de PIX
-		if (pagamento.getPix() != null && !pagamento.getPix().isEmpty()) {
-			// Validações do PIX
-			if (pagamento.getCpf() == null || pagamento.getCpf().isEmpty()) {
-				return false;
-			}
-		}
-
-		// Validação de dinheiro
-		if (pagamento.getDinheiro() != null && pagamento.getDinheiro() > 0) {
-			// Validações do pagamento em dinheiro
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean finalizarPedido(Pagamento pagamento) {
-		if (!validacaoDaEscolha(pagamento)) {
-			return false;
-		}
-
-		pagamentoRepository.save(pagamento);
-		return true;
-	}
-
-	@Override
-	public Double calcularTotal(Pagamento pagamento) {
-		// Implementação do cálculo do total
-		// Esta é uma implementação simplificada. Na prática, você precisa calcular
-		// baseado nos ingressos, alimentos, etc.
-		Double valorIngressos = 30.0; // Valor fixo para exemplo
-
-		return valorIngressos;
+	public List<PagamentoDTO> findByFilme(Integer filmeId) {
+		return pagamentoRepository.findByFilmeId(filmeId).stream().map(this::toDTO).collect(Collectors.toList());
 	}
 }

@@ -1,12 +1,15 @@
 package com.cleber.cinema.controller;
 
-import com.cleber.cinema.model.Pagamento;
+import com.cleber.cinema.dto.PagamentoCreateDTO;
+import com.cleber.cinema.dto.PagamentoDTO;
 import com.cleber.cinema.services.PagamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,40 +17,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pagamentos")
 @Tag(name = "Pagamentos", description = "Gerenciamento de pagamentos")
+@RequiredArgsConstructor
 public class PagamentoController {
 
 	private final PagamentoService service;
 
-	@Autowired
-	public PagamentoController(PagamentoService service) {
-		this.service = service;
-	}
-
 	@PostMapping
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Criar pagamento")
-	public ResponseEntity<Pagamento> create(@RequestBody Pagamento pagamento) {
-		return new ResponseEntity<>(service.save(pagamento), HttpStatus.CREATED);
+	public ResponseEntity<PagamentoDTO> create(@Valid @RequestBody PagamentoCreateDTO dto) {
+		PagamentoDTO created = service.create(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
 	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Listar todos")
-	public ResponseEntity<List<Pagamento>> findAll() {
+	public ResponseEntity<List<PagamentoDTO>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Buscar por ID")
-	public ResponseEntity<Pagamento> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+	public ResponseEntity<PagamentoDTO> findById(@PathVariable Integer id) {
+		PagamentoDTO dto = service.findById(id);
+		return ResponseEntity.ok(dto);
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Atualizar pagamento")
-	public ResponseEntity<Pagamento> update(@PathVariable Integer id, @RequestBody Pagamento pagamento) {
-		return ResponseEntity.ok(service.update(id, pagamento));
+	public ResponseEntity<PagamentoDTO> update(@PathVariable Integer id, @Valid @RequestBody PagamentoCreateDTO dto) {
+		PagamentoDTO updated = service.update(id, dto);
+		return ResponseEntity.ok(updated);
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Excluir pagamento")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
@@ -55,24 +62,9 @@ public class PagamentoController {
 	}
 
 	@GetMapping("/filme/{filmeId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Buscar por filme")
-	public ResponseEntity<List<Pagamento>> findByFilme(@PathVariable Integer filmeId) {
+	public ResponseEntity<List<PagamentoDTO>> findByFilme(@PathVariable Integer filmeId) {
 		return ResponseEntity.ok(service.findByFilme(filmeId));
-	}
-
-	@PostMapping("/{id}/finalizar")
-	@Operation(summary = "Finalizar pedido")
-	public ResponseEntity<Boolean> finalizarPedido(@PathVariable Integer id) {
-		Pagamento pagamento = service.findById(id);
-		boolean resultado = service.finalizarPedido(pagamento);
-		return ResponseEntity.ok(resultado);
-	}
-
-	@GetMapping("/{id}/total")
-	@Operation(summary = "Calcular total")
-	public ResponseEntity<Double> calcularTotal(@PathVariable Integer id) {
-		Pagamento pagamento = service.findById(id);
-		Double total = service.calcularTotal(pagamento);
-		return ResponseEntity.ok(total);
 	}
 }

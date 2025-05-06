@@ -22,7 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		// Log para debug
 		System.out.println("Usuário autenticado: " + usuario.getEmail() + " | Role: " + usuario.getRole());
 
-		// Corrigido: converte enum Role para String usando .name()
 		return User.builder()
 				.username(usuario.getEmail())
 				.password(usuario.getPassword())

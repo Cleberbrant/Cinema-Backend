@@ -1,17 +1,15 @@
 package com.cleber.cinema.services;
 
-import com.cleber.cinema.model.Pagamento;
+import com.cleber.cinema.dto.PagamentoCreateDTO;
+import com.cleber.cinema.dto.PagamentoDTO;
 
 import java.util.List;
 
 public interface PagamentoService {
-	Pagamento save(Pagamento pagamento);
-	List<Pagamento> findAll();
-	Pagamento findById(Integer id);
+	PagamentoDTO create(PagamentoCreateDTO dto);
+	List<PagamentoDTO> findAll();
+	PagamentoDTO findById(Integer id);
+	PagamentoDTO update(Integer id, PagamentoCreateDTO dto);
 	void delete(Integer id);
-	Pagamento update(Integer id, Pagamento pagamento);
-	List<Pagamento> findByFilme(Integer filmeId);
-	boolean validacaoDaEscolha(Pagamento pagamento);
-	boolean finalizarPedido(Pagamento pagamento);
-	Double calcularTotal(Pagamento pagamento);
+	List<PagamentoDTO> findByFilme(Integer filmeId);
 }
