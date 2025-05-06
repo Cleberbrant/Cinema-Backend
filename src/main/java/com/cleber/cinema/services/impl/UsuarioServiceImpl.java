@@ -1,8 +1,10 @@
 package com.cleber.cinema.services.impl;
 
-import com.cleber.cinema.dto.UsuarioDTO;
+import com.cleber.cinema.dto.LocalidadeDTO;
 import com.cleber.cinema.dto.UsuarioCreateDTO;
+import com.cleber.cinema.dto.UsuarioDTO;
 import com.cleber.cinema.enums.Role;
+import com.cleber.cinema.model.Localidade;
 import com.cleber.cinema.model.Usuario;
 import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.services.UsuarioService;
@@ -40,9 +42,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 		usuario.setNome(usuarioDTO.getNome());
 		usuario.setEmail(usuarioDTO.getEmail());
-		usuario.setEstado(usuarioDTO.getEstado());
-		usuario.setCidade(usuarioDTO.getCidade());
 		usuario.setRole(usuarioDTO.getRole());
+		if (usuarioDTO.getLocalidade() != null) {
+			usuario.setLocalidade(toLocalidadeEntity(usuarioDTO.getLocalidade()));
+		}
 		usuarioRepository.save(usuario);
 		return toDTO(usuario);
 	}
@@ -63,10 +66,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 				.cpf(dto.getCpf())
 				.email(dto.getEmail())
 				.password(passwordEncoder.encode(dto.getPassword()))
-				.endereco(dto.getEndereco())
-				.estado(dto.getEstado())
-				.cidade(dto.getCidade())
-				.role(Role.ROLE_USER)
+				.role(dto.getRole() != null ? Role.valueOf(dto.getRole()) : Role.ROLE_USER)
+				.localidade(toLocalidadeEntity(dto.getLocalidade()))
 				.build();
 		usuarioRepository.save(usuario);
 		return toDTO(usuario);
@@ -87,8 +88,26 @@ public class UsuarioServiceImpl implements UsuarioService {
 		dto.setNome(usuario.getNome());
 		dto.setEmail(usuario.getEmail());
 		dto.setRole(usuario.getRole());
-		dto.setEstado(usuario.getEstado());
-		dto.setCidade(usuario.getCidade());
+		dto.setLocalidade(toLocalidadeDTO(usuario.getLocalidade()));
+		return dto;
+	}
+
+	private Localidade toLocalidadeEntity(LocalidadeDTO dto) {
+		if (dto == null) return null;
+		return Localidade.builder()
+				.endereco(dto.getEndereco())
+				.cep(dto.getCep())
+				.referencia(dto.getReferencia())
+				.build();
+	}
+
+	private LocalidadeDTO toLocalidadeDTO(Localidade localidade) {
+		if (localidade == null) return null;
+		LocalidadeDTO dto = new LocalidadeDTO();
+		dto.setId(localidade.getId());
+		dto.setEndereco(localidade.getEndereco());
+		dto.setCep(localidade.getCep());
+		dto.setReferencia(localidade.getReferencia());
 		return dto;
 	}
 }

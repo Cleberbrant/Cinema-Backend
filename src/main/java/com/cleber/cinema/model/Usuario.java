@@ -42,8 +42,8 @@ public class Usuario {
 	@NotNull(message = "O tipo de conta é obrigatório")
 	private Role role;
 
-	@NotNull(message = "A localidade é obrigatória")
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "localidade_id")
+	@NotNull
 	private Localidade localidade;
 }

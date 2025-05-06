@@ -9,11 +9,3 @@ CREATE TABLE pagamento (
                            usuario_id BIGINT NOT NULL REFERENCES usuario(id),
                            filme_id INTEGER REFERENCES filme(id)
 );
-
-CREATE TABLE pagamento_alimento (
-                                    pagamento_id INTEGER REFERENCES pagamento(id) ON DELETE CASCADE,
-                                    alimento_id INTEGER REFERENCES alimento(id) ON DELETE CASCADE,
-                                    PRIMARY KEY (pagamento_id, alimento_id)
-);
-
-CREATE INDEX idx_pagamento_usuario ON pagamento(usuario_id);
