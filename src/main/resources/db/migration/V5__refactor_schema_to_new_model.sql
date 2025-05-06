@@ -46,9 +46,22 @@ CREATE TABLE IF NOT EXISTS alimento (
                                         descricao VARCHAR(1000)
 );
 
--- 8. Índices úteis
+-- 8. Criar tabela sessao (se ainda não existir)
+CREATE TABLE IF NOT EXISTS sessao (
+                                      id SERIAL PRIMARY KEY,
+                                      data_hora_sessao TIMESTAMP NOT NULL,
+                                      sala_id INTEGER NOT NULL,
+                                      filme_id INTEGER NOT NULL,
+                                      CONSTRAINT fk_sessao_sala FOREIGN KEY (sala_id) REFERENCES sala(id) ON DELETE CASCADE,
+                                      CONSTRAINT fk_sessao_filme FOREIGN KEY (filme_id) REFERENCES filme(id) ON DELETE CASCADE
+);
+
+-- 9. Índices úteis
 CREATE INDEX IF NOT EXISTS idx_filme_genero ON filme(genero);
 CREATE INDEX IF NOT EXISTS idx_alimento_tipo ON alimento(tipo);
 CREATE INDEX IF NOT EXISTS idx_cinema_nome ON cinema(nome);
 CREATE INDEX IF NOT EXISTS idx_localidade_cep ON localidade(cep);
 CREATE INDEX IF NOT EXISTS idx_sala_tecnologia ON sala(tecnologia);
+CREATE INDEX IF NOT EXISTS idx_sessao_filme ON sessao(filme_id);
+CREATE INDEX IF NOT EXISTS idx_sessao_sala ON sessao(sala_id);
+CREATE INDEX IF NOT EXISTS idx_sessao_data ON sessao(data_hora_sessao);
