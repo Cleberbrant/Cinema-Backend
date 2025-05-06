@@ -1,12 +1,9 @@
 package com.cleber.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,20 +13,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Cinema {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "O nome do cinema é obrigatório")
 	private String nome;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@NotNull(message = "A localidade do cinema é obrigatória")
+	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "localidade_id")
 	private Localidade localidade;
 
-	@OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Sala> salas = new ArrayList<>();
 }
