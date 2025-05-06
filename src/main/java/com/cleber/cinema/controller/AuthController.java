@@ -2,7 +2,7 @@ package com.cleber.cinema.controller;
 
 import com.cleber.cinema.dto.AuthRequestDTO;
 import com.cleber.cinema.dto.AuthResponseDTO;
-import com.cleber.cinema.dto.UsuarioDTO;
+import com.cleber.cinema.dto.UsuarioCadastroDTO;
 import com.cleber.cinema.model.Usuario;
 import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.security.JwtUtil;
@@ -34,19 +34,18 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody UsuarioDTO usuarioDTO) {
+	public ResponseEntity<?> register(@RequestBody UsuarioCadastroDTO usuarioCadastroDTO) {
 		// Verifique se o email já existe
-		if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+		if (usuarioRepository.findByEmail(usuarioCadastroDTO.getEmail()).isPresent()) {
 			return ResponseEntity.badRequest().body("Email já cadastrado");
 		}
 		// Crie um novo usuário
 		Usuario usuario = Usuario.builder()
-				.email(usuarioDTO.getEmail())
-				.password(passwordEncoder.encode(usuarioDTO.getPassword()))
-				.role(usuarioDTO.getRole() != null ? usuarioDTO.getRole() : "ROLE_CLIENTE")
+				.email(usuarioCadastroDTO.getEmail())
+				.password(passwordEncoder.encode(usuarioCadastroDTO.getPassword()))
+				.role(usuarioCadastroDTO.getRole() != null ? usuarioCadastroDTO.getRole() : "ROLE_CLIENTE")
 				.build();
 		usuarioRepository.save(usuario);
 		return ResponseEntity.ok("Usuário cadastrado com sucesso!");
 	}
-
 }

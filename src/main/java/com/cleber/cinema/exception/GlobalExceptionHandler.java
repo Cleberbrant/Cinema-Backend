@@ -2,6 +2,8 @@ package com.cleber.cinema.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +52,16 @@ public class GlobalExceptionHandler {
 			errors.put(fieldName, errorMessage);
 		});
 		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+	}
+
+	// Trata tanto AccessDeniedException quanto AuthorizationDeniedException (Spring Security 6.3+)
+	@ExceptionHandler({AccessDeniedException.class, AuthorizationDeniedException.class})
+	public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(Exception ex) {
+		ApiErrorResponse error = new ApiErrorResponse(
+				HttpStatus.FORBIDDEN.value(),
+				"Acesso negado: você não tem permissão para acessar este recurso.",
+				LocalDateTime.now());
+		return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(Exception.class)
