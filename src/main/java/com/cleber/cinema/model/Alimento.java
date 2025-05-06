@@ -1,35 +1,31 @@
 package com.cleber.cinema.model;
 
+import com.cleber.cinema.enums.TipoAlimento;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Alimento {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "O nome do alimento é obrigatório")
 	private String nome;
-	private String combo;
-	private String pipoca;
-	private String bebida;
-	private String doces;
-	private Double preco;
-	private String descricao;
 
-	@ManyToOne
-	@JoinColumn(name = "filme_id")
-	private Filme filme;
+	@NotNull(message = "O tipo do alimento é obrigatório")
+	@Enumerated(EnumType.STRING)
+	private TipoAlimento tipo;
+
+	@Positive(message = "O preço deve ser positivo")
+	@NotNull(message = "O preço é obrigatório")
+	private Double preco;
+
+	private String descricao;
 }

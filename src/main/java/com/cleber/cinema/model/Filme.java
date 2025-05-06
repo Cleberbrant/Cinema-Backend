@@ -1,50 +1,45 @@
 package com.cleber.cinema.model;
 
+import com.cleber.cinema.enums.GeneroFilme;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Filme {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "O título é obrigatório")
 	private String titulo;
-	private String duracao;
+
+	@NotNull(message = "A duração é obrigatória")
+	private LocalTime duracao;
+
+	@NotBlank(message = "A sinopse é obrigatória")
+	@Column(length = 1000)
 	private String sinopse;
-	private String genero;
-	private String avaliacao;
+
+	@NotNull(message = "O gênero é obrigatório")
+	@Enumerated(EnumType.STRING)
+	private GeneroFilme genero;
+
+	@NotBlank(message = "O diretor é obrigatório")
 	private String diretor;
-	private String ingresso;
+
+	@NotNull(message = "O valor do ingresso é obrigatório")
+	@DecimalMin(value = "0.0", inclusive = false, message = "O valor do ingresso deve ser positivo")
+	@Digits(integer = 6, fraction = 2, message = "O valor do ingresso deve ter no máximo 2 casas decimais")
+	private BigDecimal valorIngresso;
+
 	private boolean emCartaz;
-
-	@ManyToMany(mappedBy = "filmes")
-	private List<Cliente> clientes = new ArrayList<>();
-
-	@ManyToMany(mappedBy = "filmes")
-	private List<Administrador> administradores = new ArrayList<>();
-
-	@OneToMany(mappedBy = "filme", cascade = CascadeType.ALL)
-	private List<Alimento> alimentos = new ArrayList<>();
-
-	@OneToMany(mappedBy = "filme", cascade = CascadeType.ALL)
-	private List<Pagamento> pagamentos = new ArrayList<>();
-
-	@OneToMany(mappedBy = "filme")
-	private List<Sessao> sessoes = new ArrayList<>();
 }

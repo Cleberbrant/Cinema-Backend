@@ -1,28 +1,17 @@
 package com.cleber.cinema.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.cleber.cinema.enums.GeneroFilme;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+import java.math.BigDecimal;
+import java.time.LocalTime;
+
 public class FilmeDTO {
 	private Integer id;
-
-	@NotBlank(message = "Título é obrigatório")
 	private String titulo;
-
-	@NotBlank(message = "Duração é obrigatória")
-	private String duracao;
-
+	private LocalTime duracao;
 	private String sinopse;
-	private String genero;
-	private boolean emCartaz;
-	private String avaliacao;
+	private GeneroFilme genero;
 	private String diretor;
-	private String ingresso;
+	private BigDecimal valorIngresso;
+	private boolean emCartaz;
 }

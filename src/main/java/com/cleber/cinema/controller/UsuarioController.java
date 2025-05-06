@@ -1,6 +1,7 @@
 package com.cleber.cinema.controller;
 
 import com.cleber.cinema.dto.UsuarioDTO;
+import com.cleber.cinema.dto.UsuarioCreateDTO;
 import com.cleber.cinema.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,12 @@ import java.util.List;
 public class UsuarioController {
 
 	private final UsuarioService usuarioService;
+
+	// Cadastro de usuário (aberto)
+	@PostMapping("/register")
+	public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioCreateDTO dto) {
+		return ResponseEntity.ok(usuarioService.cadastrar(dto));
+	}
 
 	// Listar todos os usuários (apenas para ADMIN)
 	@GetMapping
@@ -55,5 +62,13 @@ public class UsuarioController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	// Promover usuário para admin (apenas para ADMIN)
+	@PutMapping("/{id}/promover")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<UsuarioDTO> promoverParaAdmin(@PathVariable Long id) {
+		UsuarioDTO promovido = usuarioService.promoverParaAdmin(id);
+		return ResponseEntity.ok(promovido);
 	}
 }
