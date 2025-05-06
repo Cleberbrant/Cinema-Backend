@@ -1,14 +1,15 @@
 package com.cleber.cinema.services;
 
-import com.cleber.cinema.model.Localidade;
+import com.cleber.cinema.dto.LocalidadeCreateDTO;
+import com.cleber.cinema.dto.LocalidadeDTO;
 
 import java.util.List;
 
 public interface LocalidadeService {
-	Localidade save(Localidade localidade);
-	List<Localidade> findAll();
-	Localidade findById(Integer id);
+	LocalidadeDTO create(LocalidadeCreateDTO dto);
+	List<LocalidadeDTO> findAll();
+	LocalidadeDTO findById(Integer id);
+	LocalidadeDTO update(Integer id, LocalidadeCreateDTO dto);
 	void delete(Integer id);
-	Localidade update(Integer id, Localidade localidade);
-	List<Localidade> findByCep(String cep);
+	List<LocalidadeDTO> findByCep(String cep);
 }

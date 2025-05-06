@@ -1,30 +1,26 @@
 package com.cleber.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Localidade {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "O endereço é obrigatório")
 	private String endereco;
-	private String cep;
-	private String referencia;
 
-	@OneToOne(mappedBy = "localidade")
-	private Cinema cinema;
+	@NotBlank(message = "O CEP é obrigatório")
+	private String cep;
+
+	@NotBlank(message = "A referência é obrigatória")
+	private String referencia;
 }

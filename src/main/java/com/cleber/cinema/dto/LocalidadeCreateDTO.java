@@ -3,8 +3,7 @@ package com.cleber.cinema.dto;
 import lombok.Data;
 
 @Data
-public class LocalidadeDTO {
-	private Integer id;
+public class LocalidadeCreateDTO {
 	private String endereco;
 	private String cep;
 	private String referencia;
