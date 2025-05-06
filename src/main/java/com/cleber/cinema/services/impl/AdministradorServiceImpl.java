@@ -1,5 +1,7 @@
 package com.cleber.cinema.services.impl;
 
+import com.cleber.cinema.dto.AdministradorCreateDTO;
+import com.cleber.cinema.dto.AdministradorDTO;
 import com.cleber.cinema.exception.ResourceNotFoundException;
 import com.cleber.cinema.model.Administrador;
 import com.cleber.cinema.repositories.AdministradorRepository;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,19 +19,58 @@ public class AdministradorServiceImpl implements AdministradorService {
 
 	private final AdministradorRepository administradorRepository;
 
-	@Override
-	public Administrador save(Administrador administrador) {
-		return administradorRepository.save(administrador);
+	private AdministradorDTO toDTO(Administrador admin) {
+		AdministradorDTO dto = new AdministradorDTO();
+		dto.setId(admin.getId());
+		dto.setNome(admin.getNome());
+		dto.setDataNascimento(admin.getDataNascimento());
+		dto.setCpf(admin.getCpf());
+		dto.setEmail(admin.getEmail());
+		dto.setEndereco(admin.getEndereco());
+		return dto;
+	}
+
+	private Administrador toEntity(AdministradorCreateDTO dto) {
+		Administrador admin = new Administrador();
+		admin.setNome(dto.getNome());
+		admin.setDataNascimento(dto.getDataNascimento());
+		admin.setCpf(dto.getCpf());
+		admin.setEmail(dto.getEmail());
+		admin.setSenha(dto.getSenha());
+		admin.setEndereco(dto.getEndereco());
+		return admin;
 	}
 
 	@Override
-	public List<Administrador> findAll() {
-		return administradorRepository.findAll();
+	public AdministradorDTO save(AdministradorCreateDTO dto) {
+		Administrador admin = toEntity(dto);
+		return toDTO(administradorRepository.save(admin));
 	}
 
 	@Override
-	public Optional<Administrador> findById(Integer id) {
-		return administradorRepository.findById(id);
+	public List<AdministradorDTO> findAll() {
+		return administradorRepository.findAll().stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Optional<AdministradorDTO> findById(Integer id) {
+		return administradorRepository.findById(id)
+				.map(this::toDTO);
+	}
+
+	@Override
+	public AdministradorDTO update(Integer id, AdministradorCreateDTO dto) {
+		Administrador admin = administradorRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com id: " + id));
+		admin.setNome(dto.getNome());
+		admin.setDataNascimento(dto.getDataNascimento());
+		admin.setCpf(dto.getCpf());
+		admin.setEmail(dto.getEmail());
+		admin.setSenha(dto.getSenha());
+		admin.setEndereco(dto.getEndereco());
+		return toDTO(administradorRepository.save(admin));
 	}
 
 	@Override
@@ -37,43 +79,29 @@ public class AdministradorServiceImpl implements AdministradorService {
 	}
 
 	@Override
-	public Administrador update(Integer id, Administrador administradorAtualizado) {
-		return administradorRepository.findById(id)
-				.map(administrador -> {
-					administrador.setNome(administradorAtualizado.getNome());
-					administrador.setDataNascimento(administradorAtualizado.getDataNascimento());
-					administrador.setCpf(administradorAtualizado.getCpf());
-					administrador.setEmail(administradorAtualizado.getEmail());
-					administrador.setSenha(administradorAtualizado.getSenha());
-					administrador.setEndereco(administradorAtualizado.getEndereco());
-					return administradorRepository.save(administrador);
-				})
-				.orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com id: " + id));
+	public Optional<AdministradorDTO> findByCpf(String cpf) {
+		return administradorRepository.findByCpf(cpf)
+				.map(this::toDTO);
 	}
 
 	@Override
-	public Optional<Administrador> findByCpf(String cpf) {
-		return administradorRepository.findByCpf(cpf);
+	public Optional<AdministradorDTO> findByEmail(String email) {
+		return administradorRepository.findByEmail(email)
+				.map(this::toDTO);
 	}
 
 	@Override
-	public Optional<Administrador> findByEmail(String email) {
-		return administradorRepository.findByEmail(email);
-	}
-
-	@Override
-	public boolean validacaoAdmin(Administrador admin) {
-		// Implementação da lógica de validação do administrador
-		if (admin.getNome() == null || admin.getNome().isEmpty()) {
+	public boolean validacaoAdmin(AdministradorCreateDTO dto) {
+		if (dto.getNome() == null || dto.getNome().isEmpty()) {
 			return false;
 		}
-		if (admin.getCpf() == null || !admin.getCpf().matches("\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}")) {
+		if (dto.getCpf() == null || !dto.getCpf().matches("\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}")) {
 			return false;
 		}
-		if (admin.getEmail() == null || !admin.getEmail().contains("@")) {
+		if (dto.getEmail() == null || !dto.getEmail().contains("@")) {
 			return false;
 		}
-		if (admin.getEndereco() == null || admin.getEndereco().isEmpty()) {
+		if (dto.getEndereco() == null || dto.getEndereco().isEmpty()) {
 			return false;
 		}
 		return true;
