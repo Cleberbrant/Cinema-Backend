@@ -4,6 +4,7 @@ import com.cleber.cinema.dto.UsuarioDTO;
 import com.cleber.cinema.dto.UsuarioCreateDTO;
 import com.cleber.cinema.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,12 @@ public class UsuarioController {
 
 	private final UsuarioService usuarioService;
 
-	// Cadastro de usuário (aberto)
 	@PostMapping("/register")
 	public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioCreateDTO dto) {
-		return ResponseEntity.ok(usuarioService.cadastrar(dto));
+		UsuarioDTO created = usuarioService.cadastrar(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	// Listar todos os usuários (apenas para ADMIN)
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
@@ -31,7 +31,6 @@ public class UsuarioController {
 		return ResponseEntity.ok(usuarios);
 	}
 
-	// Buscar usuário por ID (apenas para ADMIN)
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UsuarioDTO> buscarPorId(@PathVariable Long id) {
@@ -40,7 +39,6 @@ public class UsuarioController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	// Deletar usuário por ID (apenas para ADMIN)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -52,7 +50,6 @@ public class UsuarioController {
 		}
 	}
 
-	// Atualizar usuário por ID (apenas para ADMIN)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
@@ -64,7 +61,6 @@ public class UsuarioController {
 		}
 	}
 
-	// Promover usuário para admin (apenas para ADMIN)
 	@PutMapping("/{id}/promover")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UsuarioDTO> promoverParaAdmin(@PathVariable Long id) {

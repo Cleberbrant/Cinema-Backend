@@ -9,6 +9,7 @@ import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.security.JwtUtil;
 import com.cleber.cinema.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,12 +37,9 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody UsuarioCadastroDTO usuarioCadastroDTO) {
-		// Verifique se o email já existe
 		if (usuarioRepository.findByEmail(usuarioCadastroDTO.getEmail()).isPresent()) {
-			return ResponseEntity.badRequest().body("Email já cadastrado");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado");
 		}
-
-		// Defina o role padrão como ROLE_USER (ou sobrescreva se o DTO for válido e seguro)
 		Role role = Role.ROLE_USER;
 		if (usuarioCadastroDTO.getRole() != null) {
 			try {
@@ -50,8 +48,6 @@ public class AuthController {
 				return ResponseEntity.badRequest().body("Role inválido! Use apenas: ROLE_USER ou ROLE_ADMIN.");
 			}
 		}
-
-		// Crie um novo usuário
 		Usuario usuario = Usuario.builder()
 				.email(usuarioCadastroDTO.getEmail())
 				.password(passwordEncoder.encode(usuarioCadastroDTO.getPassword()))
@@ -64,6 +60,6 @@ public class AuthController {
 				.role(role)
 				.build();
 		usuarioRepository.save(usuario);
-		return ResponseEntity.ok("Usuário cadastrado com sucesso!");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
 	}
 }

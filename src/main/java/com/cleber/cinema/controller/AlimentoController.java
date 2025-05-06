@@ -22,37 +22,35 @@ public class AlimentoController {
 
 	private final AlimentoService service;
 
-	// Criar alimento (apenas ADMIN)
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Criar alimento")
 	public ResponseEntity<AlimentoDTO> create(@Valid @RequestBody AlimentoDTO dto) {
-		return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+		AlimentoDTO created = service.create(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	// Listar todos (aberto)
 	@GetMapping
 	@Operation(summary = "Listar todos")
 	public ResponseEntity<List<AlimentoDTO>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 
-	// Buscar por ID (aberto)
 	@GetMapping("/{id}")
 	@Operation(summary = "Buscar por ID")
 	public ResponseEntity<AlimentoDTO> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+		AlimentoDTO dto = service.findById(id);
+		return ResponseEntity.ok(dto);
 	}
 
-	// Atualizar alimento (apenas ADMIN)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Atualizar alimento")
 	public ResponseEntity<AlimentoDTO> update(@PathVariable Integer id, @Valid @RequestBody AlimentoDTO dto) {
-		return ResponseEntity.ok(service.update(id, dto));
+		AlimentoDTO updated = service.update(id, dto);
+		return ResponseEntity.ok(updated);
 	}
 
-	// Excluir alimento (apenas ADMIN)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Excluir alimento")
@@ -61,21 +59,18 @@ public class AlimentoController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// Buscar por tipo (aberto)
 	@GetMapping("/tipo/{tipo}")
 	@Operation(summary = "Buscar por tipo")
 	public ResponseEntity<List<AlimentoDTO>> findByTipo(@PathVariable TipoAlimento tipo) {
 		return ResponseEntity.ok(service.findByTipo(tipo));
 	}
 
-	// Buscar por nome (aberto)
 	@GetMapping("/nome/{nome}")
 	@Operation(summary = "Buscar por nome")
 	public ResponseEntity<List<AlimentoDTO>> findByNome(@PathVariable String nome) {
 		return ResponseEntity.ok(service.findByNome(nome));
 	}
 
-	// Buscar por preço máximo (aberto)
 	@GetMapping("/preco/{preco}")
 	@Operation(summary = "Buscar por preço máximo")
 	public ResponseEntity<List<AlimentoDTO>> findByPrecoMaximo(@PathVariable Double preco) {

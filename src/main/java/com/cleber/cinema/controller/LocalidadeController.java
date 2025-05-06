@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,37 +22,35 @@ public class LocalidadeController {
 
 	private final LocalidadeService service;
 
-	// Criar localidade (apenas ADMIN)
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Criar localidade")
 	public ResponseEntity<LocalidadeDTO> create(@Valid @RequestBody LocalidadeCreateDTO dto) {
-		return ResponseEntity.status(201).body(service.create(dto));
+		LocalidadeDTO created = service.create(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	// Listar todas (aberto)
 	@GetMapping
 	@Operation(summary = "Listar todas")
 	public ResponseEntity<List<LocalidadeDTO>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 
-	// Buscar por ID (aberto)
 	@GetMapping("/{id}")
 	@Operation(summary = "Buscar por ID")
 	public ResponseEntity<LocalidadeDTO> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+		LocalidadeDTO dto = service.findById(id);
+		return ResponseEntity.ok(dto);
 	}
 
-	// Atualizar localidade (apenas ADMIN)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Atualizar localidade")
 	public ResponseEntity<LocalidadeDTO> update(@PathVariable Integer id, @Valid @RequestBody LocalidadeCreateDTO dto) {
-		return ResponseEntity.ok(service.update(id, dto));
+		LocalidadeDTO updated = service.update(id, dto);
+		return ResponseEntity.ok(updated);
 	}
 
-	// Excluir localidade (apenas ADMIN)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Excluir localidade")
@@ -60,7 +59,6 @@ public class LocalidadeController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// Buscar por CEP (aberto)
 	@GetMapping("/cep/{cep}")
 	@Operation(summary = "Buscar por CEP")
 	public ResponseEntity<List<LocalidadeDTO>> findByCep(@PathVariable String cep) {

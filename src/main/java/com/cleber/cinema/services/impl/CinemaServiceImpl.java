@@ -24,12 +24,13 @@ public class CinemaServiceImpl implements CinemaService {
 		CinemaDTO dto = new CinemaDTO();
 		dto.setId(cinema.getId());
 		dto.setNome(cinema.getNome());
-		dto.setLocalidade(toLocalidadeDTO(cinema.getLocalidade()));
+		dto.setLocalidade(toLocalidadeDTO(cinema.getLocalidade())); // Aqui o id já estará preenchido
 		return dto;
 	}
 
 	private LocalidadeDTO toLocalidadeDTO(Localidade localidade) {
 		LocalidadeDTO dto = new LocalidadeDTO();
+		dto.setId(localidade.getId()); // Aqui pega o id gerado pelo banco
 		dto.setEndereco(localidade.getEndereco());
 		dto.setCep(localidade.getCep());
 		dto.setReferencia(localidade.getReferencia());
@@ -44,13 +45,13 @@ public class CinemaServiceImpl implements CinemaService {
 		return localidade;
 	}
 
-	@Override
 	public CinemaDTO create(CinemaCreateDTO dto) {
 		Cinema cinema = Cinema.builder()
 				.nome(dto.getNome())
 				.localidade(toLocalidadeEntity(dto.getLocalidade()))
 				.build();
-		return toDTO(cinemaRepository.save(cinema));
+		Cinema cinemaSalvo = cinemaRepository.save(cinema);
+		return toDTO(cinemaSalvo);
 	}
 
 	@Override

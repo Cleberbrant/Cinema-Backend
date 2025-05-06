@@ -22,37 +22,35 @@ public class SalaController {
 
 	private final SalaService service;
 
-	// Criar sala (apenas ADMIN)
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Criar sala")
 	public ResponseEntity<SalaDTO> create(@Valid @RequestBody SalaCreateDTO dto) {
-		return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+		SalaDTO created = service.create(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	// Listar todas (aberto)
 	@GetMapping
 	@Operation(summary = "Listar todas")
 	public ResponseEntity<List<SalaDTO>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 
-	// Buscar por ID (aberto)
 	@GetMapping("/{id}")
 	@Operation(summary = "Buscar por ID")
 	public ResponseEntity<SalaDTO> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+		SalaDTO dto = service.findById(id);
+		return ResponseEntity.ok(dto);
 	}
 
-	// Atualizar sala (apenas ADMIN)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Atualizar sala")
 	public ResponseEntity<SalaDTO> update(@PathVariable Integer id, @Valid @RequestBody SalaCreateDTO dto) {
-		return ResponseEntity.ok(service.update(id, dto));
+		SalaDTO updated = service.update(id, dto);
+		return ResponseEntity.ok(updated);
 	}
 
-	// Excluir sala (apenas ADMIN)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Excluir sala")
@@ -61,14 +59,12 @@ public class SalaController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// Buscar por cinema (aberto)
 	@GetMapping("/cinema/{cinemaId}")
 	@Operation(summary = "Buscar por cinema")
 	public ResponseEntity<List<SalaDTO>> findByCinema(@PathVariable Integer cinemaId) {
 		return ResponseEntity.ok(service.findByCinema(cinemaId));
 	}
 
-	// Buscar por tecnologia (aberto)
 	@GetMapping("/tecnologia/{tecnologia}")
 	@Operation(summary = "Buscar por tecnologia")
 	public ResponseEntity<List<SalaDTO>> findByTecnologia(@PathVariable String tecnologia) {

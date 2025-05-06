@@ -24,37 +24,35 @@ public class SessaoController {
 
 	private final SessaoService service;
 
-	// Criar sessão (apenas ADMIN)
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Criar sessão")
 	public ResponseEntity<SessaoDTO> create(@Valid @RequestBody SessaoCreateDTO dto) {
-		return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+		SessaoDTO created = service.create(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	// Listar todas (aberto)
 	@GetMapping
 	@Operation(summary = "Listar todas")
 	public ResponseEntity<List<SessaoDTO>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 
-	// Buscar por ID (aberto)
 	@GetMapping("/{id}")
 	@Operation(summary = "Buscar por ID")
 	public ResponseEntity<SessaoDTO> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+		SessaoDTO dto = service.findById(id);
+		return ResponseEntity.ok(dto);
 	}
 
-	// Atualizar sessão (apenas ADMIN)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Atualizar sessão")
 	public ResponseEntity<SessaoDTO> update(@PathVariable Integer id, @Valid @RequestBody SessaoCreateDTO dto) {
-		return ResponseEntity.ok(service.update(id, dto));
+		SessaoDTO updated = service.update(id, dto);
+		return ResponseEntity.ok(updated);
 	}
 
-	// Excluir sessão (apenas ADMIN)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Excluir sessão")
@@ -63,21 +61,18 @@ public class SessaoController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// Buscar por filme (aberto)
 	@GetMapping("/filme/{filmeId}")
 	@Operation(summary = "Buscar por filme")
 	public ResponseEntity<List<SessaoDTO>> findByFilme(@PathVariable Integer filmeId) {
 		return ResponseEntity.ok(service.findByFilme(filmeId));
 	}
 
-	// Buscar por sala (aberto)
 	@GetMapping("/sala/{salaId}")
 	@Operation(summary = "Buscar por sala")
 	public ResponseEntity<List<SessaoDTO>> findBySala(@PathVariable Integer salaId) {
 		return ResponseEntity.ok(service.findBySala(salaId));
 	}
 
-	// Buscar por data (aberto)
 	@GetMapping("/data/{data}")
 	@Operation(summary = "Buscar por data")
 	public ResponseEntity<List<SessaoDTO>> findByData(
