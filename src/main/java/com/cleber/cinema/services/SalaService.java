@@ -1,19 +1,16 @@
 package com.cleber.cinema.services;
 
-import com.cleber.cinema.model.Sala;
+import com.cleber.cinema.dto.SalaCreateDTO;
+import com.cleber.cinema.dto.SalaDTO;
 
 import java.util.List;
 
 public interface SalaService {
-	Sala save(Sala sala);
-	List<Sala> findAll();
-	Sala findById(Integer id);
+	SalaDTO create(SalaCreateDTO dto);
+	List<SalaDTO> findAll();
+	SalaDTO findById(Integer id);
+	SalaDTO update(Integer id, SalaCreateDTO dto);
 	void delete(Integer id);
-	Sala update(Integer id, Sala sala);
-	List<Sala> findByCinema(Integer cinemaId);
-	List<Sala> findByTecnologia(String tecnologia);
-	boolean selecionarSala(Integer salaId);
-	boolean selecionarTecnologia(String tecnologia);
-	boolean confirmacaoSala(Sala sala);
-	void criarSala(Sala sala);
+	List<SalaDTO> findByCinema(Integer cinemaId);
+	List<SalaDTO> findByTecnologia(String tecnologia);
 }

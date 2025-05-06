@@ -1,43 +1,38 @@
 package com.cleber.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Sala {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotNull(message = "O número da sala é obrigatório")
+	@Min(value = 1, message = "O número da sala deve ser positivo")
 	@Column(name = "numero_da_sala")
 	private Integer numeroDaSala;
 
+	@NotNull(message = "A capacidade é obrigatória")
+	@Min(value = 1, message = "A capacidade deve ser positiva")
 	private Integer capacidade;
 
+	@Size(max = 1000, message = "O mapa da sala deve ter no máximo 1000 caracteres")
 	@Column(name = "mapa_da_sala")
 	private String mapaDaSala;
 
+	@NotBlank(message = "A tecnologia é obrigatória")
 	private String tecnologia;
 
+	@NotNull(message = "O cinema é obrigatório")
 	@ManyToOne
 	@JoinColumn(name = "cinema_id")
 	private Cinema cinema;
-
-	@OneToMany(mappedBy = "sala", cascade = CascadeType.ALL)
-	private List<Sessao> sessoes = new ArrayList<>();
 }

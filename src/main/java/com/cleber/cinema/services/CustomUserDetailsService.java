@@ -22,11 +22,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 		// Log para debug
 		System.out.println("Usuário autenticado: " + usuario.getEmail() + " | Role: " + usuario.getRole());
 
-		// Retorna um UserDetails com a role correta
+		// Corrigido: converte enum Role para String usando .name()
 		return User.builder()
 				.username(usuario.getEmail())
 				.password(usuario.getPassword())
-				.authorities(Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole())))
+				.authorities(Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole().name())))
 				.accountExpired(false)
 				.accountLocked(false)
 				.credentialsExpired(false)

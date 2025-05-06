@@ -3,6 +3,7 @@ package com.cleber.cinema.controller;
 import com.cleber.cinema.dto.AuthRequestDTO;
 import com.cleber.cinema.dto.AuthResponseDTO;
 import com.cleber.cinema.dto.UsuarioCadastroDTO;
+import com.cleber.cinema.enums.Role;
 import com.cleber.cinema.model.Usuario;
 import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.security.JwtUtil;
@@ -39,11 +40,28 @@ public class AuthController {
 		if (usuarioRepository.findByEmail(usuarioCadastroDTO.getEmail()).isPresent()) {
 			return ResponseEntity.badRequest().body("Email já cadastrado");
 		}
+
+		// Defina o role padrão como ROLE_USER (ou sobrescreva se o DTO for válido e seguro)
+		Role role = Role.ROLE_USER;
+		if (usuarioCadastroDTO.getRole() != null) {
+			try {
+				role = Role.valueOf(usuarioCadastroDTO.getRole());
+			} catch (IllegalArgumentException e) {
+				return ResponseEntity.badRequest().body("Role inválido! Use apenas: ROLE_USER ou ROLE_ADMIN.");
+			}
+		}
+
 		// Crie um novo usuário
 		Usuario usuario = Usuario.builder()
 				.email(usuarioCadastroDTO.getEmail())
 				.password(passwordEncoder.encode(usuarioCadastroDTO.getPassword()))
-				.role(usuarioCadastroDTO.getRole() != null ? usuarioCadastroDTO.getRole() : "ROLE_CLIENTE")
+				.nome(usuarioCadastroDTO.getNome())
+				.dataNascimento(usuarioCadastroDTO.getDataNascimento())
+				.cpf(usuarioCadastroDTO.getCpf())
+				.endereco(usuarioCadastroDTO.getEndereco())
+				.estado(usuarioCadastroDTO.getEstado())
+				.cidade(usuarioCadastroDTO.getCidade())
+				.role(role)
 				.build();
 		usuarioRepository.save(usuario);
 		return ResponseEntity.ok("Usuário cadastrado com sucesso!");
