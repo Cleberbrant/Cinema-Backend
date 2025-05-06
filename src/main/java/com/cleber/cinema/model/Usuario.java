@@ -17,30 +17,33 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank
+	@NotBlank(message = "O nome é obrigatório")
+	@Size(max = 255, message = "O nome deve ter no máximo 255 caracteres")
 	private String nome;
 
-	@NotNull
+	@NotNull(message = "A data de nascimento é obrigatória")
 	private LocalDate dataNascimento;
 
-	@NotBlank
+	@NotBlank(message = "O CPF é obrigatório")
+	@Size(min = 11, max = 14, message = "O CPF deve ter entre 11 e 14 caracteres")
 	@Column(unique = true)
 	private String cpf;
 
-	@NotBlank
-	@Email
+	@NotBlank(message = "O email é obrigatório")
+	@Email(message = "O email deve ser válido")
 	@Column(unique = true)
 	private String email;
 
-	@NotBlank
+	@NotBlank(message = "A senha é obrigatória")
+	@Size(min = 6, max = 255, message = "A senha deve ter entre 6 e 255 caracteres")
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@NotNull
+	@NotNull(message = "O tipo de conta é obrigatório")
 	private Role role;
 
+	@NotNull(message = "A localidade é obrigatória")
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "localidade_id")
-	@NotNull
 	private Localidade localidade;
 }

@@ -20,12 +20,14 @@ public class Filme {
 	private Integer id;
 
 	@NotBlank(message = "O título é obrigatório")
+	@Size(max = 255, message = "O título deve ter no máximo 255 caracteres")
 	private String titulo;
 
 	@NotNull(message = "A duração é obrigatória")
 	private LocalTime duracao;
 
 	@NotBlank(message = "A sinopse é obrigatória")
+	@Size(max = 1000, message = "A sinopse deve ter no máximo 1000 caracteres")
 	@Column(length = 1000)
 	private String sinopse;
 
@@ -34,6 +36,7 @@ public class Filme {
 	private GeneroFilme genero;
 
 	@NotBlank(message = "O diretor é obrigatório")
+	@Size(max = 255, message = "O nome do diretor deve ter no máximo 255 caracteres")
 	private String diretor;
 
 	@NotNull(message = "O valor do ingresso é obrigatório")

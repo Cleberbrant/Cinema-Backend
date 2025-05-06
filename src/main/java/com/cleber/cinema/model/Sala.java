@@ -29,6 +29,7 @@ public class Sala {
 	private String mapaDaSala;
 
 	@NotBlank(message = "A tecnologia é obrigatória")
+	@Size(max = 100, message = "A tecnologia deve ter no máximo 100 caracteres")
 	private String tecnologia;
 
 	@NotNull(message = "O cinema é obrigatório")

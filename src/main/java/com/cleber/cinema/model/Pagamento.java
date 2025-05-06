@@ -24,6 +24,7 @@ public class Pagamento {
 	private String numeroDoCartao;
 
 	@NotBlank(message = "O nome impresso no cartão é obrigatório")
+	@Size(max = 100, message = "O nome impresso deve ter no máximo 100 caracteres")
 	@Column(name = "nome_impresso")
 	private String nomeImpresso;
 

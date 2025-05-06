@@ -1,8 +1,7 @@
 package com.cleber.cinema.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ public class Cinema {
 	private Integer id;
 
 	@NotBlank(message = "O nome do cinema é obrigatório")
+	@Size(max = 255, message = "O nome do cinema deve ter no máximo 255 caracteres")
 	private String nome;
 
 	@NotNull(message = "A localidade do cinema é obrigatória")
