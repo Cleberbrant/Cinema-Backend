@@ -1,22 +1,17 @@
 package com.cleber.cinema.services;
 
 import com.cleber.cinema.dto.FilmeDTO;
-import com.cleber.cinema.model.Filme;
+import com.cleber.cinema.enums.GeneroFilme;
 
 import java.util.List;
 
 public interface FilmeService {
-	Filme save(Filme filme);
-	List<Filme> findAll();
-	Filme findById(Integer id);
+	FilmeDTO create(FilmeDTO dto);
+	List<FilmeDTO> findAll();
+	FilmeDTO findById(Integer id);
+	FilmeDTO update(Integer id, FilmeDTO dto);
 	void delete(Integer id);
-	Filme update(Integer id, Filme filme);
-
-	List<Filme> findByEmCartaz(boolean emCartaz);
-
-	List<Filme> findByGenero(String genero);
-	List<Filme> findByTitulo(String titulo);
-	boolean confirmarFilme(Filme filme);
-	Filme createFromDTO(FilmeDTO dto);
-	Filme updateFromDTO(Integer id, FilmeDTO dto);
+	List<FilmeDTO> findByEmCartaz(boolean emCartaz);
+	List<FilmeDTO> findByGenero(GeneroFilme genero);
+	List<FilmeDTO> findByTitulo(String titulo);
 }

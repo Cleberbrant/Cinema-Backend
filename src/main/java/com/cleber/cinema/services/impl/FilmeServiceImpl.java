@@ -1,8 +1,8 @@
 package com.cleber.cinema.services.impl;
 
 import com.cleber.cinema.dto.FilmeDTO;
+import com.cleber.cinema.enums.GeneroFilme;
 import com.cleber.cinema.exception.ResourceNotFoundException;
-import com.cleber.cinema.exception.ValidationException;
 import com.cleber.cinema.model.Filme;
 import com.cleber.cinema.repositories.FilmeRepository;
 import com.cleber.cinema.services.FilmeService;
@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,119 +18,92 @@ public class FilmeServiceImpl implements FilmeService {
 
 	private final FilmeRepository filmeRepository;
 
-	@Override
-	public Filme save(Filme filme) {
-		return filmeRepository.save(filme);
+	private FilmeDTO toDTO(Filme filme) {
+		FilmeDTO dto = new FilmeDTO();
+		dto.setId(filme.getId());
+		dto.setTitulo(filme.getTitulo());
+		dto.setDuracao(filme.getDuracao());
+		dto.setSinopse(filme.getSinopse());
+		dto.setGenero(filme.getGenero());
+		dto.setDiretor(filme.getDiretor());
+		dto.setValorIngresso(filme.getValorIngresso());
+		dto.setEmCartaz(filme.isEmCartaz());
+		return dto;
 	}
 
-	@Override
-	public List<Filme> findAll() {
-		return filmeRepository.findAll();
-	}
-
-	@Override
-	public Filme findById(Integer id) {
-		return filmeRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + id));
-	}
-
-	@Override
-	public void delete(Integer id) {
-		filmeRepository.deleteById(id);
-	}
-
-	@Override
-	public Filme update(Integer id, Filme filmeAtualizado) {
-		return filmeRepository.findById(id)
-				.map(filme -> {
-					filme.setTitulo(filmeAtualizado.getTitulo());
-					filme.setDuracao(filmeAtualizado.getDuracao());
-					filme.setSinopse(filmeAtualizado.getSinopse());
-					filme.setGenero(filmeAtualizado.getGenero());
-					filme.setEmCartaz(filmeAtualizado.isEmCartaz());
-					filme.setAvaliacao(filmeAtualizado.getAvaliacao());
-					filme.setDiretor(filmeAtualizado.getDiretor());
-					filme.setIngresso(filmeAtualizado.getIngresso());
-					return filmeRepository.save(filme);
-				})
-				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + id));
-	}
-
-	@Override
-	public List<Filme> findByEmCartaz(boolean emCartaz) {
-		return filmeRepository.findByEmCartaz(emCartaz);
-	}
-
-	@Override
-	public List<Filme> findByGenero(String genero) {
-		return filmeRepository.findByGenero(genero);
-	}
-
-	@Override
-	public List<Filme> findByTitulo(String titulo) {
-		return filmeRepository.findByTituloContainingIgnoreCase(titulo);
-	}
-
-	@Override
-	public boolean confirmarFilme(Filme filme) {
-		// Implementação da lógica de confirmação do filme
-		if (filme.getTitulo() == null || filme.getTitulo().isEmpty()) {
-			return false;
-		}
-		if (filme.getDuracao() == null || filme.getDuracao().isEmpty()) {
-			return false;
-		}
-		if (filme.getSinopse() == null || filme.getSinopse().isEmpty()) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public Filme createFromDTO(FilmeDTO dto) {
-		// Validar os dados do DTO
-		if (dto.getTitulo() == null || dto.getTitulo().isEmpty()) {
-			throw new ValidationException("O título do filme é obrigatório");
-		}
-
-		// Criar uma nova entidade a partir do DTO
-		Filme novoFilme = Filme.builder()
+	private Filme toEntity(FilmeDTO dto) {
+		return Filme.builder()
+				.id(dto.getId())
 				.titulo(dto.getTitulo())
 				.duracao(dto.getDuracao())
 				.sinopse(dto.getSinopse())
 				.genero(dto.getGenero())
-				.emCartaz(dto.isEmCartaz())
-				.avaliacao(dto.getAvaliacao())
 				.diretor(dto.getDiretor())
-				.ingresso(dto.getIngresso())
+				.valorIngresso(dto.getValorIngresso())
+				.emCartaz(dto.isEmCartaz())
 				.build();
-
-		// Salvar e retornar a nova entidade
-		return filmeRepository.save(novoFilme);
 	}
 
 	@Override
-	public Filme updateFromDTO(Integer id, FilmeDTO dto) {
-		// Recuperar o filme existente
+	public FilmeDTO create(FilmeDTO dto) {
+		Filme filme = toEntity(dto);
+		return toDTO(filmeRepository.save(filme));
+	}
+
+	@Override
+	public List<FilmeDTO> findAll() {
+		return filmeRepository.findAll().stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public FilmeDTO findById(Integer id) {
+		Filme filme = filmeRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + id));
+		return toDTO(filme);
+	}
+
+	@Override
+	public FilmeDTO update(Integer id, FilmeDTO dto) {
 		Filme filmeExistente = filmeRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + id));
-
-		// Atualizar os campos com os dados do DTO
 		filmeExistente.setTitulo(dto.getTitulo());
 		filmeExistente.setDuracao(dto.getDuracao());
 		filmeExistente.setSinopse(dto.getSinopse());
 		filmeExistente.setGenero(dto.getGenero());
-		filmeExistente.setEmCartaz(dto.isEmCartaz());
-		filmeExistente.setAvaliacao(dto.getAvaliacao());
 		filmeExistente.setDiretor(dto.getDiretor());
-		filmeExistente.setIngresso(dto.getIngresso());
+		filmeExistente.setValorIngresso(dto.getValorIngresso());
+		filmeExistente.setEmCartaz(dto.isEmCartaz());
+		return toDTO(filmeRepository.save(filmeExistente));
+	}
 
-		// Validar os dados atualizados
-		if (!confirmarFilme(filmeExistente)) {
-			throw new ValidationException("Dados do filme inválidos");
+	@Override
+	public void delete(Integer id) {
+		if (!filmeRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Filme não encontrado com id: " + id);
 		}
+		filmeRepository.deleteById(id);
+	}
 
-		// Salvar e retornar a entidade atualizada
-		return filmeRepository.save(filmeExistente);
+	@Override
+	public List<FilmeDTO> findByEmCartaz(boolean emCartaz) {
+		return filmeRepository.findByEmCartaz(emCartaz).stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FilmeDTO> findByGenero(GeneroFilme genero) {
+		return filmeRepository.findByGenero(genero).stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FilmeDTO> findByTitulo(String titulo) {
+		return filmeRepository.findByTituloContainingIgnoreCase(titulo).stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
 	}
 }

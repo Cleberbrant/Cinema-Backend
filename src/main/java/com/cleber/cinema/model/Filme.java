@@ -37,7 +37,7 @@ public class Filme {
 	private String diretor;
 
 	@NotNull(message = "O valor do ingresso é obrigatório")
-	@DecimalMin(value = "0.0", inclusive = false, message = "O valor do ingresso deve ser positivo")
+	@DecimalMin(value = "0.01", inclusive = true, message = "O valor do ingresso deve ser positivo")
 	@Digits(integer = 6, fraction = 2, message = "O valor do ingresso deve ter no máximo 2 casas decimais")
 	private BigDecimal valorIngresso;
 
