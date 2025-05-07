@@ -7,13 +7,13 @@
 
 ## Sobre o Projeto
 
-Este projeto é uma **API RESTful para gerenciamento de um cinema**, desenvolvida em **Spring Boot** com autenticação JWT, integração com banco de dados PostgreSQL e versionamento de schema via Flyway.  
-O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**, feito pelos alunos Cleber Brant e Wesley Lira, onde  o seguiriamos com tema e modelagem para um gerenciamento de um cinema, originalmente criado para fins acadêmicos e agora expandido para um contexto real de API Restfull, com boas práticas de arquitetura, segurança e documentação.
+Este projeto é uma **API RESTful para gerenciamento de um cinema**, desenvolvida em **Spring Boot** com autenticação JWT, integração com banco de dados PostgreSQL e versionamento de schema via Flyway.\
+O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**, feito pelos alunos Cleber Brant e Wesley Lira, onde  o seguiriamos com tema e modelagem para um gerenciamento de um cinema, originalmente criado para fins acadêmicos e agora expandido para um contexto real de API Restfull, com boas práticas de arquitetura, segurança e documentação.<br/>
 
-Link do repositório orginal: https://github.com/Weslin-0101/TP2
+Link do repositório orginal: https://github.com/Weslin-0101/TP2<br/>
 
 
-O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, alimentos, pagamentos e toda a lógica de um cinema moderno, incluindo relacionamento entre entidades, autenticação de administradores e clientes, e operações CRUD completas.
+O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, alimentos, pagamentos e toda a lógica de um cinema moderno, incluindo relacionamento entre entidades, autenticação de administradores e clientes, e operações CRUD completas.<br/>
 
 
 A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi refeita para melhores praticas de gerenciamentos de contas, onde a especialização(Pessoa, Cliente e Administração) foi substituida pela classe Usuario, atribuindo o conceito de Roles. O restante da modelagem, permaneceu igual, porém, com alterações em seus atributos para que fossem otimizados.
@@ -21,7 +21,7 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 ---
 
 ## Principais Funcionalidades
-
+<br/>
 - Cadastro e autenticação de usuários (admin e clientes) com JWT
 - Cadastro e gerenciamento de filmes, sessões, salas, cinemas e localidades
 - Gerenciamento de alimentos e vendas de alimentos
@@ -29,11 +29,11 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - Controle de acesso (admin pode promover usuários, cadastrar filmes, etc.)
 - Documentação de API via Swagger
 - Versionamento de banco de dados com Flyway
-
+<br/>
 ---
 
 ## Tecnologias Utilizadas
-
+<br/>
 - **Java 21**
 - **Maven**
 - **Spring Boot 3**
@@ -44,11 +44,11 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - **Lombok**
 - **Swagger**
 - **Docker**
-
+<br/>
 ---
 
 ## Ambiente de Desenvolvimento
-Existem duas formas de subir o sistema para desenvolvimento, sendo elas, Docker(Sem necessidade de muitas configurações) e pela própria IDE(Mais configurações de ambiente a serem feitas).
+Existem duas formas de subir o sistema para desenvolvimento, sendo elas, Docker(Sem necessidade de muitas configurações) e pela própria IDE(Mais configurações de ambiente a serem feitas).<br/>
 
 ### 1. Rodando com Docker
 
