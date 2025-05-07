@@ -9,7 +9,7 @@
 
 Este projeto é uma **API RESTful para gerenciamento de um cinema**, desenvolvida em **Spring Boot** com autenticação JWT, integração com banco de dados PostgreSQL e versionamento de schema via Flyway.
 
-O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**, feito pelos alunos Cleber Brant e Wesley Lira, onde  o seguiriamos com tema e modelagem para um gerenciamento de um cinema, originalmente criado para fins acadêmicos e agora expandido para um contexto real de API Restfull, com boas práticas de arquitetura, segurança e documentação.
+O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**, feito pelos alunos Cleber Brant e Wesley Lira, onde  seguirei com o mesmo tema e modelagem para um gerenciamento de um cinema, originalmente criado para fins acadêmicos e agora expandido para um contexto real de API Restfull, com boas práticas de arquitetura, segurança e documentação.
 
 Link do repositório orginal: https://github.com/Weslin-0101/TP2
 
