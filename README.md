@@ -22,7 +22,7 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 ---
 
 ## Principais Funcionalidades
-<br/>
+
 - Cadastro e autenticação de usuários (admin e clientes) com JWT
 - Cadastro e gerenciamento de filmes, sessões, salas, cinemas e localidades
 - Gerenciamento de alimentos e vendas de alimentos
@@ -30,11 +30,11 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - Controle de acesso (admin pode promover usuários, cadastrar filmes, etc.)
 - Documentação de API via Swagger
 - Versionamento de banco de dados com Flyway
-<br/>
+
 ---
 
 ## Tecnologias Utilizadas
-<br/>
+
 - **Java 21**
 - **Maven**
 - **Spring Boot 3**
@@ -45,11 +45,12 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - **Lombok**
 - **Swagger**
 - **Docker**
-<br/>
+
 ---
 
 ## Ambiente de Desenvolvimento
-Existem duas formas de subir o sistema para desenvolvimento, sendo elas, Docker(Sem necessidade de muitas configurações) e pela própria IDE(Mais configurações de ambiente a serem feitas).<br/>
+
+Existem duas formas de subir o sistema para desenvolvimento, sendo elas, Docker(Sem necessidade de muitas configurações) e pela própria IDE(Mais configurações de ambiente a serem feitas).
 
 ### 1. Rodando com Docker
 
