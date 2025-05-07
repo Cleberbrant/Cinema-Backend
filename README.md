@@ -12,9 +12,12 @@ O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**,
 
 Link do repositório orginal: https://github.com/Weslin-0101/TP2
 
+
 O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, alimentos, pagamentos e toda a lógica de um cinema moderno, incluindo relacionamento entre entidades, autenticação de administradores e clientes, e operações CRUD completas.
 
+
 A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi refeita para melhores praticas de gerenciamentos de contas, onde a especialização(Pessoa, Cliente e Administração) foi substituida pela classe Usuario, atribuindo o conceito de Roles. O restante da modelagem, permaneceu igual, porém, com alterações em seus atributos para que fossem otimizados.
+
 ---
 
 ## Principais Funcionalidades
@@ -59,16 +62,19 @@ O projeto já inclui um `docker-compose.yml` que sobe **tanto o banco de dados P
     ```
     docker-compose up --build -d
     ```
-   Isso irá subir:
+    
+Isso irá subir:
    - O banco de dados PostgreSQL em `localhost:5432`
    - A aplicação em `localhost:8080`
 
 **Credenciais padrão do banco:**
+
 - Usuário: `postgres`
 - Senha: `root`
 - Banco: `cinema`
 
 #### Parar os containers
+
 docker-compose down
 
 ---
@@ -78,15 +84,18 @@ docker-compose down
 Se preferir rodar a aplicação pela sua IDE (IntelliJ, Eclipse, VSCode, etc):
 
 1. **Instale o PostgreSQL 16** em sua máquina.
+
 2. **Crie o banco de dados:**
     ```
     CREATE DATABASE cinema;
     ```
+
 3. **Crie o usuário e senha (se desejar, use os padrões do projeto):**
     ```
     CREATE USER postgres WITH PASSWORD 'root';
     GRANT ALL PRIVILEGES ON DATABASE cinema TO postgres;
     ```
+
 4. **Configure o arquivo `application.properties`:**
     ```
     spring.datasource.url=jdbc:postgresql://localhost:5432/cinema
@@ -95,6 +104,7 @@ Se preferir rodar a aplicação pela sua IDE (IntelliJ, Eclipse, VSCode, etc):
     spring.jpa.hibernate.ddl-auto=none
     spring.flyway.locations=classpath:db/migration
     ```
+
 5. **Execute a aplicação pela IDE** (classe `CinemaApplication`).
 
 ---
@@ -107,6 +117,7 @@ Se preferir rodar a aplicação pela sua IDE (IntelliJ, Eclipse, VSCode, etc):
     - **E-mail:** `admin@gmail.com`
     - **Senha:** `admin`
     - **Role:** `ROLE_ADMIN`
+
 ---
 
 ## Documentação da API
