@@ -1,23 +1,54 @@
-# 🎬 Cinema Backend - Trabalho TPPE
+# 🎬 Cinema Microservices - Trabalho TPPE
 
 | Aluno                        | Matrícula   | Disciplina                                           |
 |------------------------------|-------------|------------------------------------------------------|
 | Cleber de Oliveira Brant     | 200061216   | Técnicas de Programação em Plataformas Emergentes     |
 
+---
 
 ## Sobre o Projeto
 
-Este projeto é uma **API RESTful para gerenciamento de um cinema**, desenvolvida em **Spring Boot** com autenticação JWT, integração com banco de dados PostgreSQL e versionamento de schema via Flyway.
+Este projeto é um sistema completo para gerenciamento de um cinema, desenvolvido com **arquitetura de microserviços**. O backend, o serviço de autenticação e o frontend são desacoplados e se comunicam via REST, com autenticação baseada em JWT. O sistema foi evoluído a partir de um projeto de Orientação a Objetos (OO) e agora segue boas práticas de arquitetura, segurança, versionamento de banco e documentação.
 
-O trabalho consiste na **evolução do projeto de Orientação a Objetos (OO)**, feito pelos alunos Cleber Brant e Wesley Lira, onde  seguirei com o mesmo tema e modelagem para um gerenciamento de um cinema, originalmente criado para fins acadêmicos e agora expandido para um contexto real de API Restfull, com boas práticas de arquitetura, segurança e documentação.
+O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, alimentos, pagamentos e toda a lógica de um cinema moderno, incluindo autenticação de administradores e clientes, operações CRUD completas e controle de acesso por roles.
 
-Link do repositório orginal: https://github.com/Weslin-0101/TP2
+---
 
+## Arquitetura
 
-O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, alimentos, pagamentos e toda a lógica de um cinema moderno, incluindo relacionamento entre entidades, autenticação de administradores e clientes, e operações CRUD completas.<br/>
+### Nome
 
+**Cinema Microservices Architecture**
 
-A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi refeita para melhores praticas de gerenciamentos de contas, onde a especialização(Pessoa, Cliente e Administração) foi substituida pela classe Usuario, atribuindo o conceito de Roles. O restante da modelagem, permaneceu igual, porém, com alterações em seus atributos para que fossem otimizados.
+### Microserviços
+
+- **auth-cinema**: Responsável por autenticação, cadastro e gerenciamento de usuários.
+- **cinema**: Backend principal, gerencia filmes, sessões, pagamentos, alimentos, etc.
+- **frontend**: Interface web para interação do usuário.
+
+Cada microserviço possui seu próprio banco de dados, e a comunicação entre eles é feita via HTTP/REST.
+
+---
+
+## Estrutura de Pastas
+
+/cinema-spring
+├── /auth-cinema # Microserviço de autenticação (Spring Boot)
+│ ├── src/main/java/com/cleber/auth_cinema
+│ ├── src/main/resources/application.properties
+│ ├── src/main/resources/db/migration
+│ └── Dockerfile
+├── /cinema # Backend principal (Spring Boot)
+│ ├── src/main/java/com/cleber/cinema
+│ ├── src/main/resources/application.properties
+│ ├── src/main/resources/db/migration
+│ └── Dockerfile
+├── /frontend # Frontend (React, Vue, Angular ou outro framework)
+│ ├── src/
+│ ├── package.json
+│ └── Dockerfile
+├── docker-compose.yml # Orquestração dos serviços
+└── README.md # Este arquivo
 
 ---
 
@@ -26,8 +57,8 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - Cadastro e autenticação de usuários (admin e clientes) com JWT
 - Cadastro e gerenciamento de filmes, sessões, salas, cinemas e localidades
 - Gerenciamento de alimentos e vendas de alimentos
-- Gerenciamento de pagamentos vinculados a usuários, filmes e alimentos(Simulação no sistema)
-- Controle de acesso (admin pode promover usuários, cadastrar filmes, etc.)
+- Gerenciamento de pagamentos vinculados a usuários, filmes e alimentos
+- Controle de acesso por roles (admin pode promover usuários, cadastrar filmes, etc.)
 - Documentação de API via Swagger
 - Versionamento de banco de dados com Flyway
 
@@ -43,18 +74,17 @@ A modelagem para o gerenciamento de Usuarios, tanto Admin quanto Clientes, foi r
 - **PostgreSQL 16**
 - **Flyway**
 - **Lombok**
-- **Swagger**
+- **Swagger (SpringDoc OpenAPI)**
 - **Docker**
+- **Frontend:** React, Vue ou Angular (a definir)
 
 ---
 
-## Ambiente de Desenvolvimento
-
-Existem duas formas de subir o sistema para desenvolvimento, sendo elas, Docker(Sem necessidade de muitas configurações) e pela própria IDE(Mais configurações de ambiente a serem feitas).
+## Ambientação do Sistema
 
 ### 1. Rodando com Docker
 
-O projeto já inclui um `docker-compose.yml` que sobe **tanto o banco de dados PostgreSQL quanto a aplicação Spring Boot**.
+O projeto já inclui um `docker-compose.yml` que sobe todos os microserviços e bancos de dados necessários.
 
 #### Etapas para subir com Docker
 
@@ -66,14 +96,10 @@ O projeto já inclui um `docker-compose.yml` que sobe **tanto o banco de dados P
     ```
     
 Isso irá subir:
-   - O banco de dados PostgreSQL em `localhost:5432`
-   - A aplicação em `localhost:8080`
-
-**Credenciais padrão do banco:**
-
-- Usuário: `postgres`
-- Senha: `root`
-- Banco: `cinema`
+   - O banco de dados PostgreSQL de cada serviço
+   - O backend (cinema) em `localhost:8080`
+   - O serviço de autenticação em `localhost:8081`
+   - O frontend em `localhost:3000` (ou porta definida no Dockerfile)
 
 #### Parar os containers
 
@@ -81,41 +107,38 @@ docker-compose down
 
 ---
 
-### 2. Rodando a aplicação diretamente pela IDE (Com banco local)
+### 2. Rodando localmente (IDE)
 
-Se preferir rodar a aplicação pela sua IDE (IntelliJ, Eclipse, VSCode, etc):
+#### Backend (cinema) e Auth-cinema
 
-1. **Instale o PostgreSQL 16** em sua máquina.
+1. Instale o PostgreSQL 16 em sua máquina.
+2. Crie os bancos de dados necessários (`cinema`, `auth_cinema`) e configure usuários e senhas conforme o `application.properties`.
+3. Execute cada microserviço via IDE (classe principal).
+4. O Flyway aplicará as migrations automaticamente ao iniciar cada serviço.
 
-2. **Crie o banco de dados:**
-    ```
-    CREATE DATABASE cinema;
-    ```
+#### Frontend
 
-3. **Crie o usuário e senha (se desejar, use os padrões do projeto):**
+1. Acesse a pasta do frontend:
     ```
-    CREATE USER postgres WITH PASSWORD 'root';
-    GRANT ALL PRIVILEGES ON DATABASE cinema TO postgres;
+    cd frontend
     ```
-
-4. **Configure o arquivo `application.properties`:**
+2. Instale as dependências:
     ```
-    spring.datasource.url=jdbc:postgresql://localhost:5432/cinema
-    spring.datasource.username=postgres
-    spring.datasource.password=root
-    spring.jpa.hibernate.ddl-auto=none
-    spring.flyway.locations=classpath:db/migration
+    npm install
     ```
-
-5. **Execute a aplicação pela IDE** (classe `CinemaApplication`).
+3. Suba o serviço:
+    ```
+    npm start
+    ```
+4. Acesse via navegador: [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## Migrations e Inicialização do Banco
 
 - O projeto utiliza **Flyway** para versionamento do banco.
-- Ao rodar a aplicação (via Docker ou IDE), as migrations serão aplicadas automaticamente.
-- Um usuário Admin padrão do sistema é criado via migration:
+- Ao rodar a aplicação (via Docker ou IDE), as migrations são aplicadas automaticamente.
+- Um usuário Admin padrão pode ser criado via migration:
     - **E-mail:** `admin@gmail.com`
     - **Senha:** `admin`
     - **Role:** `ROLE_ADMIN`
@@ -124,9 +147,23 @@ Se preferir rodar a aplicação pela sua IDE (IntelliJ, Eclipse, VSCode, etc):
 
 ## Documentação da API
 
-- Acesse o Swagger UI em:  
-  [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
-  para explorar e testar todos os endpoints da API.
+- **Backend (cinema):** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **Auth-cinema:** [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
 
 ---
 
+## Fluxo de Autenticação
+
+1. O usuário se cadastra ou faz login no serviço de autenticação.
+2. O frontend recebe um token JWT.
+3. O token é enviado nas requisições ao backend para autenticação/autorização.
+
+---
+
+## Considerações Finais
+
+- O projeto é escalável e pode ser adaptado para novas funcionalidades.
+- A comunicação entre microserviços é feita via REST e JWT.
+- O frontend pode ser desenvolvido em qualquer tecnologia moderna (React, Vue, Angular).
+
+---
