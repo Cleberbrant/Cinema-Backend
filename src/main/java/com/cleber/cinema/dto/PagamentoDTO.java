@@ -13,8 +13,8 @@ public class PagamentoDTO {
 	private String codigoDeSeguranca;
 	private Double valorTotal;
 	private LocalDateTime dataPagamento;
-	private Long usuarioId;
-	private String usuarioNome; //Nome do usuário pagador
+	private String usuarioId;
+	private String usuarioNome;
 	private Integer filmeId;
 	private String filmeTitulo;
 	private List<Integer> alimentosIds;

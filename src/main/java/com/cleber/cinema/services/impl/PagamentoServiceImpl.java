@@ -6,14 +6,16 @@ import com.cleber.cinema.exception.ResourceNotFoundException;
 import com.cleber.cinema.model.Alimento;
 import com.cleber.cinema.model.Filme;
 import com.cleber.cinema.model.Pagamento;
-import com.cleber.cinema.model.Usuario;
 import com.cleber.cinema.repositories.AlimentoRepository;
 import com.cleber.cinema.repositories.FilmeRepository;
 import com.cleber.cinema.repositories.PagamentoRepository;
-import com.cleber.cinema.repositories.UsuarioRepository;
 import com.cleber.cinema.services.PagamentoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +28,10 @@ public class PagamentoServiceImpl implements PagamentoService {
 	private final PagamentoRepository pagamentoRepository;
 	private final FilmeRepository filmeRepository;
 	private final AlimentoRepository alimentoRepository;
-	private final UsuarioRepository usuarioRepository;
+	private final RestTemplate restTemplate;
+
+	@Value("${auth.service.url:http://localhost:8081}")
+	private String authServiceUrl;
 
 	private PagamentoDTO toDTO(Pagamento pagamento) {
 		PagamentoDTO dto = new PagamentoDTO();
@@ -37,26 +42,39 @@ public class PagamentoServiceImpl implements PagamentoService {
 		dto.setCodigoDeSeguranca(pagamento.getCodigoDeSeguranca());
 		dto.setValorTotal(pagamento.getValorTotal());
 		dto.setDataPagamento(pagamento.getDataPagamento());
-		dto.setUsuarioId(pagamento.getUsuario() != null ? pagamento.getUsuario().getId() : null);
-		dto.setUsuarioNome(pagamento.getUsuario() != null ? pagamento.getUsuario().getNome() : null);
+		dto.setUsuarioId(pagamento.getUsuarioId());
+
+		if (pagamento.getUsuarioId() != null) {
+			try {
+				String nomeUsuario = buscarNomeUsuarioPorId(pagamento.getUsuarioId());
+				dto.setUsuarioNome(nomeUsuario);
+			} catch (Exception e) {
+				dto.setUsuarioNome("Usuário não encontrado");
+			}
+		}
+
 		dto.setFilmeId(pagamento.getFilme() != null ? pagamento.getFilme().getId() : null);
 		dto.setFilmeTitulo(pagamento.getFilme() != null ? pagamento.getFilme().getTitulo() : null);
+
 		dto.setAlimentosIds(pagamento.getAlimentos() != null
-				? pagamento.getAlimentos().stream().map(a -> a.getId()).toList()
+				? pagamento.getAlimentos().stream().map(Alimento::getId).toList()
 				: null);
 		dto.setAlimentosNomes(pagamento.getAlimentos() != null
-				? pagamento.getAlimentos().stream().map(a -> a.getNome()).toList()
+				? pagamento.getAlimentos().stream().map(Alimento::getNome).toList()
 				: null);
+
 		return dto;
 	}
 
 	private Pagamento toEntity(PagamentoCreateDTO dto) {
-		Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-				.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + dto.getUsuarioId()));
 		Filme filme = filmeRepository.findById(dto.getFilmeId())
 				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
+
 		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
 				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+
+		String usuarioId = obterUsuarioIdDoContexto();
+
 		return Pagamento.builder()
 				.numeroDoCartao(dto.getNumeroDoCartao())
 				.nomeImpresso(dto.getNomeImpresso())
@@ -64,7 +82,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 				.codigoDeSeguranca(dto.getCodigoDeSeguranca())
 				.valorTotal(dto.getValorTotal())
 				.dataPagamento(LocalDateTime.now())
-				.usuario(usuario)
+				.usuarioId(usuarioId)
 				.filme(filme)
 				.alimentos(alimentos)
 				.build();
@@ -92,20 +110,21 @@ public class PagamentoServiceImpl implements PagamentoService {
 	public PagamentoDTO update(Integer id, PagamentoCreateDTO dto) {
 		Pagamento pagamento = pagamentoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado com id: " + id));
-		Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-				.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + dto.getUsuarioId()));
+
 		Filme filme = filmeRepository.findById(dto.getFilmeId())
 				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
+
 		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
 				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+
 		pagamento.setNumeroDoCartao(dto.getNumeroDoCartao());
 		pagamento.setNomeImpresso(dto.getNomeImpresso());
 		pagamento.setDataDeValidade(dto.getDataDeValidade());
 		pagamento.setCodigoDeSeguranca(dto.getCodigoDeSeguranca());
 		pagamento.setValorTotal(dto.getValorTotal());
-		pagamento.setUsuario(usuario);
 		pagamento.setFilme(filme);
 		pagamento.setAlimentos(alimentos);
+
 		return toDTO(pagamentoRepository.save(pagamento));
 	}
 
@@ -120,5 +139,22 @@ public class PagamentoServiceImpl implements PagamentoService {
 	@Override
 	public List<PagamentoDTO> findByFilme(Integer filmeId) {
 		return pagamentoRepository.findByFilmeId(filmeId).stream().map(this::toDTO).collect(Collectors.toList());
+	}
+
+	private String obterUsuarioIdDoContexto() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {
+			return authentication.getName();
+		}
+		throw new RuntimeException("Usuário não autenticado");
+	}
+
+	private String buscarNomeUsuarioPorId(String usuarioId) {
+		try {
+			String url = authServiceUrl + "/api/usuarios/" + usuarioId;
+			return restTemplate.getForObject(url, String.class);
+		} catch (Exception e) {
+			return "Usuário não encontrado";
+		}
 	}
 }

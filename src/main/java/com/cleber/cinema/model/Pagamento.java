@@ -31,7 +31,7 @@ public class Pagamento {
 	@NotBlank(message = "A data de validade é obrigatória")
 	@Pattern(regexp = "^(0[1-9]|1[0-2])/\\d{2}$", message = "A data de validade deve estar no formato MM/AA")
 	@Column(name = "data_de_validade")
-	private String dataDeValidade; // MM/AA
+	private String dataDeValidade;
 
 	@NotBlank(message = "O código de segurança é obrigatório")
 	@Size(min = 3, max = 4, message = "O código de segurança deve ter 3 ou 4 dígitos")
@@ -48,9 +48,8 @@ public class Pagamento {
 	private LocalDateTime dataPagamento;
 
 	@NotNull(message = "O usuário é obrigatório")
-	@ManyToOne
-	@JoinColumn(name = "usuario_id", nullable = false)
-	private Usuario usuario;
+	@Column(name = "usuario_id", nullable = false)
+	private String usuarioId;
 
 	@NotNull(message = "O filme é obrigatório")
 	@ManyToOne

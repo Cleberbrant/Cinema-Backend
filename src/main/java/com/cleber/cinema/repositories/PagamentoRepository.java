@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface PagamentoRepository extends JpaRepository<Pagamento, Integer> {
 	List<Pagamento> findByFilmeId(Integer filmeId);
-	List<Pagamento> findByUsuarioId(Long usuarioId);
+	List<Pagamento> findByUsuarioId(String usuarioId); // Alterado para String
 }
