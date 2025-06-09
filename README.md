@@ -32,24 +32,31 @@ Cada microserviço possui seu próprio banco de dados, e a comunicação entre e
 
 ## Estrutura de Pastas
 
-/cinema-spring
-├── /auth-cinema # Microserviço de autenticação (Spring Boot)
-│ ├── src/main/java/com/cleber/auth_cinema
-│ ├── src/main/resources/application.properties
-│ ├── src/main/resources/db/migration
-│ └── Dockerfile
-├── /cinema # Backend principal (Spring Boot)
-│ ├── src/main/java/com/cleber/cinema
-│ ├── src/main/resources/application.properties
-│ ├── src/main/resources/db/migration
-│ └── Dockerfile
-├── /frontend # Frontend (React, Vue, Angular ou outro framework)
-│ ├── src/
-│ ├── package.json
-│ └── Dockerfile
-├── docker-compose.yml # Orquestração dos serviços
-└── README.md # Este arquivo
-
+'''
+cinema-spring/
+└── cinema/
+    ├── .idea/
+    ├── .mvn/
+    ├── src/
+    │   └── main/
+    │       ├── java/
+    │       │   └── com/
+    │       │       └── cleber/
+    │       │           └── cinema/
+    │       │               ├── config/
+    │       │               ├── controller/
+    │       │               ├── dto/
+    │       │               ├── enums/
+    │       │               ├── exception/
+    │       │               ├── model/
+    │       │               ├── repositories/
+    │       │               ├── security/
+    │       │               ├── services/
+    │       │               └── CinemaApplication.java
+    │       └── resources/
+    └── test/
+    └── target/
+'''
 ---
 
 ## Principais Funcionalidades
