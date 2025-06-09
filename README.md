@@ -32,7 +32,7 @@ Cada microserviço possui seu próprio banco de dados, e a comunicação entre e
 
 ## Estrutura de Pastas
 
-'''
+```
 cinema-spring/
 └── cinema/
     ├── .idea/
@@ -56,7 +56,7 @@ cinema-spring/
     │       └── resources/
     └── test/
     └── target/
-'''
+```
 ---
 
 ## Principais Funcionalidades
