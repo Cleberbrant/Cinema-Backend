@@ -8,7 +8,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-@Disabled
 @SpringBootTest
 @Testcontainers
 public class CinemaApplicationTests {
