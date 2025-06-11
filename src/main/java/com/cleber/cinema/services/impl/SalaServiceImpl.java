@@ -29,6 +29,7 @@ public class SalaServiceImpl implements SalaService {
 		dto.setMapaDaSala(sala.getMapaDaSala());
 		dto.setTecnologia(sala.getTecnologia());
 		dto.setCinemaId(sala.getCinema().getId());
+
 		return dto;
 	}
 

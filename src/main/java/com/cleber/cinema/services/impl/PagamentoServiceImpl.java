@@ -141,12 +141,12 @@ public class PagamentoServiceImpl implements PagamentoService {
 		return pagamentoRepository.findByFilmeId(filmeId).stream().map(this::toDTO).collect(Collectors.toList());
 	}
 
-	private String obterUsuarioIdDoContexto() {
+	public String obterUsuarioIdDoContexto() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.isAuthenticated()) {
-			return authentication.getName();
+		if (authentication == null || !authentication.isAuthenticated()) {
+			return null;
 		}
-		throw new RuntimeException("Usuário não autenticado");
+		return authentication.getName();
 	}
 
 	private String buscarNomeUsuarioPorId(String usuarioId) {

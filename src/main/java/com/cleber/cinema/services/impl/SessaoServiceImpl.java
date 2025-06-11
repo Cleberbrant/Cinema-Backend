@@ -31,10 +31,17 @@ public class SessaoServiceImpl implements SessaoService {
 		SessaoDTO dto = new SessaoDTO();
 		dto.setId(sessao.getId());
 		dto.setDataHoraSessao(sessao.getDataHoraSessao());
+		if (sessao.getSala() == null) {
+			throw new IllegalStateException("Sessão sem sala associada");
+		}
 		dto.setSalaId(sessao.getSala().getId());
+		if (sessao.getFilme() == null) {
+			throw new IllegalStateException("Sessão sem filme associado");
+		}
 		dto.setFilmeId(sessao.getFilme().getId());
 		return dto;
 	}
+
 
 	private Sessao toEntity(SessaoCreateDTO dto) {
 		Sala sala = salaRepository.findById(dto.getSalaId())
