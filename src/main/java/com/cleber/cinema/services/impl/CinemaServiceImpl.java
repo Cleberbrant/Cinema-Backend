@@ -24,13 +24,13 @@ public class CinemaServiceImpl implements CinemaService {
 		CinemaDTO dto = new CinemaDTO();
 		dto.setId(cinema.getId());
 		dto.setNome(cinema.getNome());
-		dto.setLocalidade(toLocalidadeDTO(cinema.getLocalidade())); // Aqui o id já estará preenchido
+		dto.setLocalidade(toLocalidadeDTO(cinema.getLocalidade()));
 		return dto;
 	}
 
 	private LocalidadeDTO toLocalidadeDTO(Localidade localidade) {
 		LocalidadeDTO dto = new LocalidadeDTO();
-		dto.setId(localidade.getId()); // Aqui pega o id gerado pelo banco
+		dto.setId(localidade.getId());
 		dto.setEndereco(localidade.getEndereco());
 		dto.setCep(localidade.getCep());
 		dto.setReferencia(localidade.getReferencia());
