@@ -48,6 +48,7 @@ public class Pagamento {
 	private LocalDateTime dataPagamento;
 
 	@NotNull(message = "O usuário é obrigatório")
+	@NotBlank(message = "O ID do usuário é obrigatório")
 	@Column(name = "usuario_id", nullable = false)
 	private String usuarioId;
 
