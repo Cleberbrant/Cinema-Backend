@@ -14,11 +14,7 @@ O sistema permite o cadastro e gerenciamento de usuários, filmes, sessões, ali
 
 ---
 
-## Arquitetura
-
-### Nome
-
-**Cinema Microservices Architecture**
+## Arquitetura Microserviços
 
 ### Microserviços
 
