@@ -42,8 +42,18 @@ public class SessaoServiceImpl implements SessaoService {
 		return dto;
 	}
 
-
 	private Sessao toEntity(SessaoCreateDTO dto) {
+		// Validação defensiva para evitar NullPointerException e garantir 400
+		if (dto.getSalaId() == null) {
+			throw new IllegalArgumentException("A sala é obrigatória");
+		}
+		if (dto.getFilmeId() == null) {
+			throw new IllegalArgumentException("O filme é obrigatório");
+		}
+		if (dto.getDataHoraSessao() == null) {
+			throw new IllegalArgumentException("A data e hora da sessão são obrigatórias");
+		}
+
 		Sala sala = salaRepository.findById(dto.getSalaId())
 				.orElseThrow(() -> new ResourceNotFoundException("Sala não encontrada com id: " + dto.getSalaId()));
 		Filme filme = filmeRepository.findById(dto.getFilmeId())
@@ -79,6 +89,18 @@ public class SessaoServiceImpl implements SessaoService {
 	public SessaoDTO update(Integer id, SessaoCreateDTO dto) {
 		Sessao sessao = sessaoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sessão não encontrada com id: " + id));
+
+		// Validação defensiva no update também
+		if (dto.getSalaId() == null) {
+			throw new IllegalArgumentException("A sala é obrigatória");
+		}
+		if (dto.getFilmeId() == null) {
+			throw new IllegalArgumentException("O filme é obrigatório");
+		}
+		if (dto.getDataHoraSessao() == null) {
+			throw new IllegalArgumentException("A data e hora da sessão são obrigatórias");
+		}
+
 		Sala sala = salaRepository.findById(dto.getSalaId())
 				.orElseThrow(() -> new ResourceNotFoundException("Sala não encontrada com id: " + dto.getSalaId()));
 		Filme filme = filmeRepository.findById(dto.getFilmeId())

@@ -10,6 +10,7 @@ import com.cleber.cinema.repositories.AlimentoRepository;
 import com.cleber.cinema.repositories.FilmeRepository;
 import com.cleber.cinema.repositories.PagamentoRepository;
 import com.cleber.cinema.services.PagamentoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 	private final FilmeRepository filmeRepository;
 	private final AlimentoRepository alimentoRepository;
 	private final RestTemplate restTemplate;
+	private final ObjectMapper objectMapper;
 
 	@Value("${auth.service.url:http://localhost:8081}")
 	private String authServiceUrl;
@@ -67,11 +69,18 @@ public class PagamentoServiceImpl implements PagamentoService {
 	}
 
 	private Pagamento toEntity(PagamentoCreateDTO dto) {
+		// Validação explícita para evitar NullPointerException e garantir 400
+		if (dto.getAlimentosIds() == null || dto.getAlimentosIds().isEmpty()) {
+			throw new IllegalArgumentException("Pelo menos um alimento deve ser selecionado");
+		}
+		if (dto.getFilmeId() == null) {
+			throw new IllegalArgumentException("O filme é obrigatório");
+		}
+
 		Filme filme = filmeRepository.findById(dto.getFilmeId())
 				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
 
-		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
-				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+		List<Alimento> alimentos = alimentoRepository.findAllById(dto.getAlimentosIds());
 
 		String usuarioId = obterUsuarioIdDoContexto();
 
@@ -111,11 +120,17 @@ public class PagamentoServiceImpl implements PagamentoService {
 		Pagamento pagamento = pagamentoRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Pagamento não encontrado com id: " + id));
 
+		if (dto.getAlimentosIds() == null || dto.getAlimentosIds().isEmpty()) {
+			throw new IllegalArgumentException("Pelo menos um alimento deve ser selecionado");
+		}
+		if (dto.getFilmeId() == null) {
+			throw new IllegalArgumentException("O filme é obrigatório");
+		}
+
 		Filme filme = filmeRepository.findById(dto.getFilmeId())
 				.orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado com id: " + dto.getFilmeId()));
 
-		List<Alimento> alimentos = dto.getAlimentosIds() != null ?
-				alimentoRepository.findAllById(dto.getAlimentosIds()) : null;
+		List<Alimento> alimentos = alimentoRepository.findAllById(dto.getAlimentosIds());
 
 		pagamento.setNumeroDoCartao(dto.getNumeroDoCartao());
 		pagamento.setNomeImpresso(dto.getNomeImpresso());
@@ -152,7 +167,9 @@ public class PagamentoServiceImpl implements PagamentoService {
 	private String buscarNomeUsuarioPorId(String usuarioId) {
 		try {
 			String url = authServiceUrl + "/api/usuarios/" + usuarioId;
-			return restTemplate.getForObject(url, String.class);
+			String response = restTemplate.getForObject(url, String.class);
+			// Remove aspas extras do JSON
+			return objectMapper.readValue(response, String.class);
 		} catch (Exception e) {
 			return "Usuário não encontrado";
 		}

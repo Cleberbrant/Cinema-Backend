@@ -34,6 +34,9 @@ public class SalaServiceImpl implements SalaService {
 	}
 
 	private Sala toEntity(SalaCreateDTO dto) {
+		if (dto.getCinemaId() == null) {
+			throw new IllegalArgumentException("O cinema é obrigatório");
+		}
 		Cinema cinema = cinemaRepository.findById(dto.getCinemaId())
 				.orElseThrow(() -> new ResourceNotFoundException("Cinema não encontrado com id: " + dto.getCinemaId()));
 		return Sala.builder()
